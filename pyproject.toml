@@ -51,9 +51,6 @@ packages = ["src/hvsampledata"]
 packages = ["src/hvsampledata"]
 include = ["scripts"]
 
-[tool.hatch.build.hooks.vcs]
-version-file = "src/hvsampledata/_version.py"
-
 [tool.pytest.ini_options]
 addopts = ["--strict-config", "--strict-markers", "--color=yes"]
 minversion = "7"
