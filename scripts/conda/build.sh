@@ -6,7 +6,7 @@ PACKAGE="hvsampledata"
 
 python -m build --sdist .
 
-VERSION=$(python -c "import $PACKAGE; print($PACKAGE._version.__version__)")
+VERSION=$(python -c "from src.$PACKAGE import _version; print(_version.__version__)")
 export VERSION
 
 conda build scripts/conda/recipe --no-anaconda-upload --no-verify -c conda-forge --package-format 2
