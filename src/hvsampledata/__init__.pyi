@@ -33,12 +33,6 @@ def penguins(
 ) -> pd.DataFrame: ...
 @overload
 def penguins(
-    engine: Literal["pandas"] = "pandas",
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[True] = True,
-) -> pd.DataFrame: ...
-@overload
-def penguins(
     engine: Literal["polars"] = "polars",
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
@@ -49,12 +43,6 @@ def penguins(
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
 ) -> pl.LazyFrame: ...
-@overload
-def penguins(
-    engine: Literal["dask"] = "dask",
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[False] = False,
-) -> dd.DataFrame: ...
 @overload
 def penguins(
     engine: Literal["dask"] = "dask",
@@ -81,12 +69,6 @@ def large_time_series(
 ) -> pd.DataFrame: ...
 @overload
 def large_time_series(
-    engine: Literal["pandas"] = "pandas",
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[True] = True,
-) -> pd.DataFrame: ...
-@overload
-def large_time_series(
     engine: Literal["polars"] = "polars",
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
@@ -97,12 +79,6 @@ def large_time_series(
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
 ) -> pl.LazyFrame: ...
-@overload
-def large_time_series(
-    engine: Literal["dask"] = "dask",
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[False] = False,
-) -> dd.DataFrame: ...
 @overload
 def large_time_series(
     engine: Literal["dask"] = "dask",

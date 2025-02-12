@@ -13,11 +13,11 @@ def generate_tabular_overloads(func_name: str) -> str:
                 return_type = (
                     "pl.LazyFrame | dd.DataFrame" if lazy else "pd.DataFrame | pl.DataFrame"
                 )
-            elif engine == "pandas":
+            elif engine == "pandas" and not lazy:
                 return_type = "pd.DataFrame"
             elif engine == "polars":
                 return_type = "pl.LazyFrame" if lazy else "pl.DataFrame"
-            elif engine == "dask":
+            elif engine == "dask" and lazy:
                 return_type = "dd.DataFrame"
             else:
                 continue
