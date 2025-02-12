@@ -4,8 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hvsampledata"
-# dynamic = ["version"]
-version = "0.0.0a1"
+dynamic = ["version"]
 description = "Datasets for the HoloViz projects"
 readme = "README.md"
 license = { text = "BSD" }
@@ -41,9 +40,9 @@ dependencies = ["platformdirs", "urllib3"]
 # [project.scripts]
 # holoviews = "holoviews.util.command:main"
 
-# [tool.hatch.version]
-# source = "vcs"
-# raw-options = { version_scheme = "no-guess-dev" }
+[tool.hatch.version]
+source = "vcs"
+raw-options = { version_scheme = "no-guess-dev" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hvsampledata"]
