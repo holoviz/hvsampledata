@@ -78,14 +78,14 @@ jobs:
       - name: conda setup
         run: |
           conda install -y anaconda-client
-      - name: conda dev upload
-        if: contains(env.TAG, 'a') || contains(env.TAG, 'b') || contains(env.TAG, 'rc')
-        run: |
-          anaconda --token ${{ secrets.CONDA_UPLOAD_TOKEN }} upload --user pyviz --label=dev $CONDA_FILE
-      - name: conda main upload
-        if: (!(contains(env.TAG, 'a') || contains(env.TAG, 'b') || contains(env.TAG, 'rc')))
-        run: |
-          anaconda --token ${{ secrets.CONDA_UPLOAD_TOKEN }} upload --user pyviz --label=dev --label=main $CONDA_FILE
+      # - name: conda dev upload
+      #   if: contains(env.TAG, 'a') || contains(env.TAG, 'b') || contains(env.TAG, 'rc')
+      #   run: |
+      #     anaconda --token ${{ secrets.CONDA_UPLOAD_TOKEN }} upload --user pyviz --label=dev $CONDA_FILE
+      # - name: conda main upload
+      #   if: (!(contains(env.TAG, 'a') || contains(env.TAG, 'b') || contains(env.TAG, 'rc')))
+      #   run: |
+      #     anaconda --token ${{ secrets.CONDA_UPLOAD_TOKEN }} upload --user pyviz --label=dev --label=main $CONDA_FILE
 
   pip_build:
     name: Build PyPI
@@ -135,5 +135,5 @@ jobs:
         with:
           name: pip
           path: dist/
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      # - name: Publish to PyPI
+      #   uses: pypa/gh-action-pypi-publish@release/v1
