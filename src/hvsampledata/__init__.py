@@ -23,8 +23,8 @@ from ._util import _load_gridded, _load_tabular
 
 # Tabular data
 def penguins(
-    *,
     engine: str | None = None,
+    *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
 ):
@@ -38,8 +38,8 @@ def penguins(
 
 
 def large_timeseries(
-    *,
     engine: str | None = None,
+    *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
 ):
@@ -60,8 +60,8 @@ def large_timeseries(
 
 # Gridded data
 def airplane(
-    *,
     engine: str | None = None,
+    *,
     engine_kwargs: dict[str, Any] | None = None,
 ):
     """

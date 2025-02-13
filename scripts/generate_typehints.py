@@ -27,6 +27,7 @@ def generate_tabular_overloads(func_name: str) -> str:
 @overload
 def {func_name}(
     engine: {engine_literal} = {engine_repr},
+    *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: {lazy_literal} = {lazy_repr},
 ) -> {return_type}: ...""".format(
@@ -62,6 +63,7 @@ def generate_gridded_overloads(func_name: str) -> str:
 @overload
 def {func_name}(
     engine: {engine_literal} = {engine_repr},
+    *,
     engine_kwargs: dict[str, Any] | None = None,
     # lazy: {lazy_literal} = {lazy_repr},
 ) -> {return_type}: ...""".format(
