@@ -44,13 +44,6 @@ dependencies = ["platformdirs", "urllib3"]
 source = "vcs"
 raw-options = { version_scheme = "no-guess-dev" }
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/hvsampledata"]
-
-[tool.hatch.build.targets.sdist]
-packages = ["src/hvsampledata"]
-include = ["scripts"]
-
 [tool.hatch.build.hooks.vcs]
 version-file = "src/hvsampledata/_version.py"
 
