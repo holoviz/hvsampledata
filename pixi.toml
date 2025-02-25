@@ -4,7 +4,7 @@ channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 
 [environments]
-default = ["required", "py312", "optional", "test-core", "lint"]
+default = ["required", "py312", "optional", "test-core", "lint", "dev"]
 
 [environments.test-39]
 features = ["required", "py39", "optional", "test-core"]
@@ -84,6 +84,15 @@ polars = "*"
 pyarrow = "*"
 rioxarray = "*"
 xarray = "*"
+
+[feature.dev.dependencies]
+jupyterlab = "*"
+jupyterlab-myst = "*"
+setuptools_scm = "*"
+
+[feature.dev.tasks]
+lab = 'jupyter lab'
+setup-dev = { depends-on = ["install", "lint-install"] }
 
 # =============================================
 # =================== TESTS ===================
