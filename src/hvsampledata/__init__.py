@@ -125,7 +125,7 @@ def penguins(
     if engine == "dask":
         engine_kwargs = (engine_kwargs or {}) | {"dtype": dtype}
     tab = _load_tabular(
-        "penguins.csv.gz",
+        "penguins.csv",
         format="csv",
         engine=engine,
         engine_kwargs=engine_kwargs,
