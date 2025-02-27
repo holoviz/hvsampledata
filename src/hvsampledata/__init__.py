@@ -33,9 +33,9 @@ def penguins(
     Parameters
     ----------
     engine : str, optional
-        Engine used to read the dataset; one of "pandas", "polars", or "polars",
-        "dask" if lazy=True. By default None, automatically selecting the first
-        library found installed.
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (lazy=True). By default None,
+        automatically selecting the first library found installed.
     engine_kwargs : dict[str, Any], optional
         Additional kwargs to pass to `read_csv`, by default None.
     lazy : bool, optional
