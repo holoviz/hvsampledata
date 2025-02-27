@@ -84,6 +84,7 @@ polars = "*"
 pyarrow = "*"
 rioxarray = "*"
 xarray = "*"
+netcdf4 = "*"
 
 [feature.dev.dependencies]
 jupyterlab = "*"

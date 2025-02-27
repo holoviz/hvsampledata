@@ -46,14 +46,14 @@ def {func_name}(
 def generate_gridded_overloads(func_name: str) -> str:
     """Generates overloads for a function with the specified engines and lazy options."""
     overloads = []
-    ENGINES = [None, "dataset"]
+    ENGINES = ["xarray"]
     LAZY_OPTIONS = [False]
 
     for engine in ENGINES:
         for lazy in LAZY_OPTIONS:
             if engine is None:
                 return_type = "" if lazy else "xr.Dataset"
-            elif engine == "dataset":
+            elif engine == "xarray":
                 return_type = "xr.Dataset"
             else:
                 continue

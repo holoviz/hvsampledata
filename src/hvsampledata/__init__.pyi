@@ -99,14 +99,7 @@ def large_time_series(
 ) -> dd.DataFrame: ...
 @overload
 def airplane(
-    engine: None = None,
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    # lazy: Literal[False] = False,
-) -> xr.Dataset: ...
-@overload
-def airplane(
-    engine: Literal["dataset"] = "dataset",
+    engine: Literal["xarray"] = "xarray",
     *,
     engine_kwargs: dict[str, Any] | None = None,
     # lazy: Literal[False] = False,
