@@ -103,6 +103,7 @@ __all__: tuple[str, ...]
             generate_tabular_overloads("penguins"),
             generate_tabular_overloads("large_time_series"),
             generate_gridded_overloads("airplane"),
+            generate_gridded_overloads("air_temperature"),
             "",
         ]
     )

@@ -104,3 +104,10 @@ def airplane(
     engine_kwargs: dict[str, Any] | None = None,
     # lazy: Literal[False] = False,
 ) -> xr.Dataset: ...
+@overload
+def air_temperature(
+    engine: Literal["xarray"] = "xarray",
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    # lazy: Literal[False] = False,
+) -> xr.Dataset: ...
