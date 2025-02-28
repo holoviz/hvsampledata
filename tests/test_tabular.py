@@ -42,3 +42,81 @@ def test_lazy_load(dataset, engine):
     else:
         msg = "Not valid engine"
         raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_penguins_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.penguins(engine=engine)
+    if engine == "pandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "species": np.dtype("O"),
+                "island": np.dtype("O"),
+                "bill_length_mm": np.dtype("float64"),
+                "bill_depth_mm": np.dtype("float64"),
+                "flipper_length_mm": np.dtype("float64"),
+                "body_mass_g": np.dtype("float64"),
+                "sex": np.dtype("O"),
+                "year": np.dtype("int64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.schema == {
+            "species": pl.String,
+            "island": pl.String,
+            "bill_length_mm": pl.Float64,
+            "bill_depth_mm": pl.Float64,
+            "flipper_length_mm": pl.Int64,
+            "body_mass_g": pl.Int64,
+            "sex": pl.String,
+            "year": pl.Int64,
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_penguins_schema_lazy(engine):
+    pytest.importorskip(engine)
+    df = hvs.penguins(engine=engine, lazy=True)
+    if engine == "dask":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "species": pd.StringDtype("pyarrow"),
+                "island": pd.StringDtype("pyarrow"),
+                "bill_length_mm": np.dtype("float64"),
+                "bill_depth_mm": np.dtype("float64"),
+                "flipper_length_mm": np.dtype("float64"),
+                "body_mass_g": np.dtype("float64"),
+                "sex": pd.StringDtype("pyarrow"),
+                "year": np.dtype("int64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.collect_schema() == {
+            "species": pl.String,
+            "island": pl.String,
+            "bill_length_mm": pl.Float64,
+            "bill_depth_mm": pl.Float64,
+            "flipper_length_mm": pl.Int64,
+            "body_mass_g": pl.Int64,
+            "sex": pl.String,
+            "year": pl.Int64,
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
