@@ -52,16 +52,18 @@ def penguins(
 
     Schema
     ------
-    | name              | type     | description                                                         |
-    |:------------------|:---------|:--------------------------------------------------------------------|
-    | species           | category | Penguin species (Adelie, Gentoo, or Chinstrap)                      |
-    | island            | category | Island where the penguin was observed (Torgersen, Biscoe, or Dream) |
-    | bill_length_mm    | number   | Bill/Beak length in millimeter                                      |
-    | bill_depth_mm     | number   | Bill/Beak depth in millimeters                                      |
-    | flipper_length_mm | integer  | Flipper length in millimeters                                       |
-    | body_mass_g       | integer  | Body mass in grams                                                  |
-    | sex               | category | Sex of the penguin (male, female or null)                           |
-    | year              | integer  | Observation year                                                    |
+    | name              | type    | description                                                         |
+    |:------------------|:--------|:--------------------------------------------------------------------|
+    | species           | string  | Penguin species (Adelie, Gentoo, or Chinstrap)                      |
+    | island            | string  | Island where the penguin was observed (Torgersen, Biscoe, or Dream) |
+    | bill_length_mm    | number  | Bill/Beak length in millimeter                                      |
+    | bill_depth_mm     | number  | Bill/Beak depth in millimeters                                      |
+    | flipper_length_mm | number* | Flipper length in millimeters                                       |
+    | body_mass_g       | number* | Body mass in grams                                                  |
+    | sex               | string  | Sex of the penguin (male, female or null)                           |
+    | year              | integer | Observation year                                                    |
+
+    * float64 for pandas and dask, int64 for polars
 
     Source
     ------
@@ -81,32 +83,8 @@ def penguins(
     environmental variability within a community of Antarctic penguins (genus
     Pygoscelis). PLoS ONE 9(3):e90081. https://doi.org/10.1371/journal.pone.0090081
     """
-    if engine in ["pandas", "dask"]:
-        dtype = {
-            "species": "category",
-            "island": "category",
-            "flipper_length_mm": "Int64",
-            "body_mass_g": "Int64",
-            "sex": "category",
-        }
-        ekwargs = {"dtype": dtype}
-        if engine == "dask":
-            # To avoid Warning gzip compression does not support breaking apart files
-            ekwargs["blocksize"] = None
-        engine_kwargs = ekwargs | (engine_kwargs or {})
-    elif engine == "polars":
-        import polars as pl
-
-        schema_overrides = {
-            "species": pl.Categorical,
-            "island": pl.Categorical,
-            "sex": pl.Categorical,
-        }
-        engine_kwargs = {"null_values": "NA", "schema_overrides": schema_overrides} | (
-            engine_kwargs or {}
-        )
-    if engine == "dask":
-        engine_kwargs = (engine_kwargs or {}) | {"dtype": dtype}
+    if engine == "polars":
+        engine_kwargs = {"null_values": "NA"} | (engine_kwargs or {})
     tab = _load_tabular(
         "penguins.csv",
         format="csv",
@@ -114,9 +92,6 @@ def penguins(
         engine_kwargs=engine_kwargs,
         lazy=lazy,
     )
-    if engine == "dask":
-        # So the categories are known/computed.
-        tab = tab.categorize(["species", "island", "sex"])
     return tab
 
 

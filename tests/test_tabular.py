@@ -54,13 +54,13 @@ def test_penguins_schema(engine):
 
         expected_dtypes = pd.Series(
             {
-                "species": pd.CategoricalDtype(categories=["Adelie", "Chinstrap", "Gentoo"]),
-                "island": pd.CategoricalDtype(categories=["Biscoe", "Dream", "Torgersen"]),
+                "species": np.dtype("O"),
+                "island": np.dtype("O"),
                 "bill_length_mm": np.dtype("float64"),
                 "bill_depth_mm": np.dtype("float64"),
-                "flipper_length_mm": pd.Int64Dtype(),
-                "body_mass_g": pd.Int64Dtype(),
-                "sex": pd.CategoricalDtype(categories=["female", "male"]),
+                "flipper_length_mm": np.dtype("float64"),
+                "body_mass_g": np.dtype("float64"),
+                "sex": np.dtype("O"),
                 "year": np.dtype("int64"),
             }
         )
@@ -69,13 +69,13 @@ def test_penguins_schema(engine):
         import polars as pl
 
         assert df.schema == {
-            "species": pl.Categorical(ordering="physical"),
-            "island": pl.Categorical(ordering="physical"),
+            "species": pl.String,
+            "island": pl.String,
             "bill_length_mm": pl.Float64,
             "bill_depth_mm": pl.Float64,
             "flipper_length_mm": pl.Int64,
             "body_mass_g": pl.Int64,
-            "sex": pl.Categorical(ordering="physical"),
+            "sex": pl.String,
             "year": pl.Int64,
         }
     else:
@@ -93,13 +93,13 @@ def test_penguins_schema_lazy(engine):
 
         expected_dtypes = pd.Series(
             {
-                "species": pd.CategoricalDtype(categories=["Adelie", "Chinstrap", "Gentoo"]),
-                "island": pd.CategoricalDtype(categories=["Biscoe", "Dream", "Torgersen"]),
+                "species": pd.StringDtype("pyarrow"),
+                "island": pd.StringDtype("pyarrow"),
                 "bill_length_mm": np.dtype("float64"),
                 "bill_depth_mm": np.dtype("float64"),
-                "flipper_length_mm": pd.Int64Dtype(),
-                "body_mass_g": pd.Int64Dtype(),
-                "sex": pd.CategoricalDtype(categories=["female", "male"]),
+                "flipper_length_mm": np.dtype("float64"),
+                "body_mass_g": np.dtype("float64"),
+                "sex": pd.StringDtype("pyarrow"),
                 "year": np.dtype("int64"),
             }
         )
@@ -108,13 +108,13 @@ def test_penguins_schema_lazy(engine):
         import polars as pl
 
         assert df.collect_schema() == {
-            "species": pl.Categorical(ordering="physical"),
-            "island": pl.Categorical(ordering="physical"),
+            "species": pl.String,
+            "island": pl.String,
             "bill_length_mm": pl.Float64,
             "bill_depth_mm": pl.Float64,
             "flipper_length_mm": pl.Int64,
             "body_mass_g": pl.Int64,
-            "sex": pl.Categorical(ordering="physical"),
+            "sex": pl.String,
             "year": pl.Int64,
         }
     else:
