@@ -5,7 +5,7 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_GRIDDED_LOOKUP
 
-datasets = [hvs.airplane, hvs.air_temperature_small]
+datasets = [hvs.airplane, hvs.air_temperature]
 
 
 @pytest.mark.parametrize("dataset", datasets)
@@ -22,11 +22,11 @@ def test_eager_load(dataset, engine):
         raise ValueError(msg)
 
 
-def test_air_temperature_small():
+def test_air_temperature():
     pytest.importorskip("xarray")
     import numpy as np
 
-    ds = hvs.air_temperature_small()
+    ds = hvs.air_temperature()
     assert ds.air.shape == (20, 25, 53)
     assert ds.attrs == {
         "Conventions": "COARDS",

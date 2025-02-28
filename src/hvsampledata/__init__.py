@@ -59,12 +59,12 @@ def large_timeseries(
 
 
 # Gridded data
-def air_temperature_small(
+def air_temperature(
     engine="xarray",
     *,
     engine_kwargs=None,
 ):
-    """Small Air Temperature gridded dataset.
+    """Air Temperature gridded dataset.
 
     Parameters
     ----------
@@ -78,8 +78,9 @@ def air_temperature_small(
     The NCEP/NCAR Reanalysis 1 project is using a state-of-the-art analysis/forecast
     system to perform data assimilation using past data from 1948 to the present.
 
-    This dataset is a temporal and spatial subset of the original data, including
-    only the air temperature variable.
+    This dataset was created by temporally resampling the `air_temperature` dataset
+    made available by xarray-data, itself being a spatial and temporal subset of
+    the original data. It only includes the air temperature variable.
 
     Temporal coverage:
     - Every 6 hours, starting from 00:00
@@ -95,12 +96,12 @@ def air_temperature_small(
     - time: datetime64[ns], 20 values
 
     Variables:
-    - air: [time,lat,lon], float64, air temperature in Kelvin
+    - air: [time|lat|lon], float64, air temperature in Kelvin
 
     Source
     ------
     `air_temperature.nc` dataset from the `xarray-data` Github repository
-    https://github.com/pydata/xarray-data, re-sampled to 20 timestamps between
+    https://github.com/pydata/xarray-data, resampled to 20 timestamps between
     2014-02-24 and 2014-02-28.
 
     Original data from:
@@ -144,7 +145,7 @@ def airplane(
 
 __all__ = (
     "__version__",
-    "air_temperature_small",
+    "air_temperature",
     "airplane",
     "large_timeseries",
     "penguins",
