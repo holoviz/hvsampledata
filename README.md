@@ -9,6 +9,7 @@ Datasets:
 | penguins         | Tabular | No     |
 | large_timeseries | Tabular | Yes    |
 | airplane         | Gridded | No     |
+| air_temperature  | Gridded | Yes    |
 
 ## Developer guide
 
