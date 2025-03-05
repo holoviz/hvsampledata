@@ -162,12 +162,15 @@ def air_temperature(
     ----------
     Kalnay et al.,The NCEP/NCAR 40-year reanalysis project, Bull. Amer. Meteor. Soc., 77, 437-470, 1996
     """
-    return _load_gridded(
+    ds = _load_gridded(
         "air_temperature_small.nc",
         format="dataset",
         engine=engine,
         engine_kwargs=engine_kwargs,
     )
+    if str(ds.dtypes["air"]) == "float32":
+        ds = ds.astype("float64")
+    return ds
 
 
 __all__ = (

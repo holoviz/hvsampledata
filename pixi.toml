@@ -30,6 +30,10 @@ no-default-feature = true
 features = ["required", "py313", "test-core"]
 no-default-feature = true
 
+[environments.test-minimum]
+features = ["required", "min-pins", "test-core"]
+no-default-feature = true
+
 # [environments.docs]
 # features = ["required", "py311", "optional", "doc"]
 # no-default-feature = true
@@ -46,8 +50,8 @@ no-default-feature = true
 nomkl = "*"
 pip = "*"
 # Required
-urllib3 = "*"
-platformdirs = "*"
+platformdirs = ">=4.0.0"
+urllib3 = ">=2.1.0"
 
 [feature.required.tasks]
 # download-data = 'python scripts/download_data.py'
@@ -55,6 +59,21 @@ install = 'python -m pip install --no-deps --disable-pip-version-check -e .'
 
 [feature.required.activation.env]
 PYTHONIOENCODING = "utf-8"
+
+[feature.min-pins.dependencies]
+# Min python
+python = "3.9.*"
+platformdirs = "==4.0.0"
+# Min required
+urllib3 = "==2.1.0"
+dask-core = "==2024.1.0"
+# Min optional
+pandas = "==2.1.0"
+polars = "==1.0.0"
+pyarrow = "==14.0.0"
+rioxarray = "==0.15.0"
+xarray = "==2023.8.0"
+netcdf4 = "==1.7.2"
 
 [feature.py39.dependencies]
 python = "3.9.*"
@@ -78,13 +97,13 @@ python = "3.13.*"
 COVERAGE_CORE = "sysmon"
 
 [feature.optional.dependencies]
-dask-core = "*"
-pandas = "*"
-polars = "*"
-pyarrow = "*"
-rioxarray = "*"
-xarray = "*"
-netcdf4 = "*"
+dask-core = ">=2024.1.0"
+pandas = ">=2.1.0"
+polars = ">=1.0.0"
+pyarrow = ">=14.0.0"
+rioxarray = ">=0.15.0"
+xarray = ">=2023.8.0"
+netcdf4 = ">=1.7.2"
 
 [feature.dev.dependencies]
 jupyterlab = "*"
