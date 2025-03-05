@@ -23,7 +23,7 @@ from ._util import _load_gridded, _load_tabular
 
 # Tabular data
 def penguins(
-    engine: str | None = None,
+    engine: str,
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
@@ -32,10 +32,9 @@ def penguins(
 
     Parameters
     ----------
-    engine : str, optional
+    engine : str
         Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
-        "polars" or "dask" for lazy dataframes (lazy=True). By default None,
-        automatically selecting the first library found installed.
+        "polars" or "dask" for lazy dataframes (lazy=True).
     engine_kwargs : dict[str, Any], optional
         Additional kwargs to pass to `read_csv`, by default None.
     lazy : bool, optional
@@ -118,7 +117,7 @@ def large_timeseries(
 
 # Gridded data
 def air_temperature(
-    engine="xarray",
+    engine: str,
     *,
     engine_kwargs=None,
 ):
@@ -126,8 +125,8 @@ def air_temperature(
 
     Parameters
     ----------
-    engine : str, optional
-        Engine used to read the dataset, by default 'xarray'.
+    engine : str
+        Engine used to read the dataset, "xarray" is the only option available.
     engine_kwargs : dict[str, Any], optional
         Additional kwargs to pass to `xarray.open_dataset`, by default None.
 
