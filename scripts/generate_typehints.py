@@ -4,16 +4,12 @@ from __future__ import annotations
 def generate_tabular_overloads(func_name: str) -> str:
     """Generates overloads for a function with the specified engines and lazy options."""
     overloads = []
-    ENGINES = [None, "pandas", "polars", "dask"]
+    ENGINES = ["pandas", "polars", "dask"]
     LAZY_OPTIONS = [False, True]
 
     for engine in ENGINES:
         for lazy in LAZY_OPTIONS:
-            if engine is None:
-                return_type = (
-                    "pl.LazyFrame | dd.DataFrame" if lazy else "pd.DataFrame | pl.DataFrame"
-                )
-            elif engine == "pandas" and not lazy:
+            if engine == "pandas" and not lazy:
                 return_type = "pd.DataFrame"
             elif engine == "polars":
                 return_type = "pl.LazyFrame" if lazy else "pl.DataFrame"
@@ -26,14 +22,13 @@ def generate_tabular_overloads(func_name: str) -> str:
             overload_def = """\
 @overload
 def {func_name}(
-    engine: {engine_literal} = {engine_repr},
+    engine: {engine_literal},
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: {lazy_literal} = {lazy_repr},
 ) -> {return_type}: ...""".format(
                 func_name=func_name,
                 engine_literal=f'Literal["{engine}"]' if engine else "None",
-                engine_repr=f'"{engine}"' if engine else "None",
                 lazy_literal=f"Literal[{lazy}]",
                 lazy_repr=lazy,
                 return_type=return_type,
@@ -62,14 +57,13 @@ def generate_gridded_overloads(func_name: str) -> str:
             overload_def = """\
 @overload
 def {func_name}(
-    engine: {engine_literal} = {engine_repr},
+    engine: {engine_literal},
     *,
     engine_kwargs: dict[str, Any] | None = None,
     # lazy: {lazy_literal} = {lazy_repr},
 ) -> {return_type}: ...""".format(
                 func_name=func_name,
                 engine_literal=f'Literal["{engine}"]' if engine else "None",
-                engine_repr=f'"{engine}"' if engine else "None",
                 lazy_literal=f"Literal[{lazy}]",
                 lazy_repr=lazy,
                 return_type=return_type,

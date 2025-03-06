@@ -15,49 +15,35 @@ __all__: tuple[str, ...]
 
 @overload
 def penguins(
-    engine: None = None,
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[False] = False,
-) -> pd.DataFrame | pl.DataFrame: ...
-@overload
-def penguins(
-    engine: None = None,
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[True] = True,
-) -> pl.LazyFrame | dd.DataFrame: ...
-@overload
-def penguins(
-    engine: Literal["pandas"] = "pandas",
+    engine: Literal["pandas"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
 ) -> pd.DataFrame: ...
 @overload
 def penguins(
-    engine: Literal["polars"] = "polars",
+    engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
 ) -> pl.DataFrame: ...
 @overload
 def penguins(
-    engine: Literal["polars"] = "polars",
+    engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
 ) -> pl.LazyFrame: ...
 @overload
 def penguins(
-    engine: Literal["dask"] = "dask",
+    engine: Literal["dask"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
 ) -> dd.DataFrame: ...
 @overload
 def air_temperature(
-    engine: Literal["xarray"] = "xarray",
+    engine: Literal["xarray"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     # lazy: Literal[False] = False,

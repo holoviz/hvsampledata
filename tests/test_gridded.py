@@ -26,7 +26,7 @@ def test_air_temperature():
     pytest.importorskip("xarray")
     import numpy as np
 
-    ds = hvs.air_temperature()
+    ds = hvs.air_temperature("xarray")
     assert ds.air.shape == (20, 25, 53)
     assert ds.attrs == {
         "Conventions": "COARDS",
