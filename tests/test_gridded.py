@@ -11,6 +11,10 @@ datasets = [hvs.air_temperature]
 @pytest.mark.parametrize("dataset", datasets)
 @pytest.mark.parametrize("engine", list(_EAGER_GRIDDED_LOOKUP))
 def test_eager_load(dataset, engine):
+    # Import netCDF4 first also to avoid this warning:
+    # untimeWarning: numpy.ndarray size changed, may indicate binary incompatibility.
+    # Expected 16 from C header, got 96 from PyObject
+    pytest.importorskip("netCDF4")
     pytest.importorskip("xarray")
     df = dataset(engine=engine)
     if engine == "xarray":
@@ -23,6 +27,7 @@ def test_eager_load(dataset, engine):
 
 
 def test_air_temperature():
+    pytest.importorskip("netCDF4")
     pytest.importorskip("xarray")
     import numpy as np
 
