@@ -63,7 +63,7 @@ def _download_data(*, url, path):
         response.release_conn()
 
 
-def _get_method(*, engine: str | None, format: str, engine_lookups: dict[str, list[str]]):
+def _get_method(*, engine: str | None, format: str, engine_lookups: dict[str, dict[str, str]]):
     # TODO: Should also work with .tar.gz like files
     if isinstance(engine, str):
         mod = importlib.import_module(engine)

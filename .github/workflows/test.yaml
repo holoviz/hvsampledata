@@ -118,15 +118,14 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest"]
-        environment: ["test-core"]
+        environment: ["test-core", "test-minimum"]
     timeout-minutes: 120
     steps:
       - uses: holoviz-dev/holoviz_tasks/pixi_install@v0
         with:
           environments: ${{ matrix.environment }}
       - name: Test Unit
-        run: |
-          pixi run -e ${{ matrix.environment }} test-unit
+        run: pixi run -e ${{ matrix.environment }} test-unit
 
   result_test_suite:
     name: result:test

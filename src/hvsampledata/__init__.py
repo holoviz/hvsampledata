@@ -1,15 +1,17 @@
-"""
-hvsampledata
-
-Shared datasets for the HoloViz projects
+"""hvsampledata: shared datasets for the HoloViz projects.
 
 Currently available datasets:
 
-| Name             | Type    | Online |
-| ---------------- | ------- | ------ |
-| penguins         | Tabular | No     |
-| large_timeseries | Tabular | Yes    |
-| airplane         | Gridded | No     |
+| Name             | Type    | Included |
+| ---------------- | ------- | -------- |
+| air_temperature  | Gridded | Yes      |
+| penguins         | Tabular | Yes      |
+
+Use it with:
+
+>>> import hvsampledata
+>>> df = hvsampledata.penguins("pandas")
+>>> ds = hvsampledata.air_temperature("xarray")
 
 """
 
@@ -20,8 +22,11 @@ from typing import Any
 from .__version import __version__
 from ._util import _load_gridded, _load_tabular
 
-
+# -----------------------------------------------------------------------------
 # Tabular data
+# -----------------------------------------------------------------------------
+
+
 def penguins(
     engine: str,
     *,
@@ -94,28 +99,11 @@ def penguins(
     return tab
 
 
-def large_timeseries(
-    engine: str | None = None,
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: bool = False,
-):
-    """
-    This is the large timeseries dataset
-
-    First time running this it will download the data.
-    """
-
-    return _load_tabular(
-        "https://datasets.holoviz.org/sensor/v1/data.parq",
-        format="parquet",
-        engine=engine,
-        engine_kwargs=engine_kwargs,
-        lazy=lazy,
-    )
-
-
+# -----------------------------------------------------------------------------
 # Gridded data
+# -----------------------------------------------------------------------------
+
+
 def air_temperature(
     engine: str,
     *,
@@ -173,37 +161,20 @@ def air_temperature(
     ----------
     Kalnay et al.,The NCEP/NCAR 40-year reanalysis project, Bull. Amer. Meteor. Soc., 77, 437-470, 1996
     """
-    return _load_gridded(
+    ds = _load_gridded(
         "air_temperature_small.nc",
         format="dataset",
         engine=engine,
         engine_kwargs=engine_kwargs,
     )
-
-
-def airplane(
-    engine: str | None = None,
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-):
-    """
-    This is the airplane.tif
-
-    First time running this it will download the data.
-    """
-
-    return _load_gridded(
-        "airplane90.tif",
-        format="dataset",
-        engine=engine,
-        engine_kwargs=engine_kwargs,
-    )
+    if str(ds.dtypes["air"]) == "float32":
+        # Float32 with older version of xarray/netcdf4.
+        ds = ds.astype("float64")
+    return ds
 
 
 __all__ = (
     "__version__",
     "air_temperature",
-    "airplane",
-    "large_timeseries",
     "penguins",
 )

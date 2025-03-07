@@ -26,7 +26,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries",
 ]
-dependencies = ["platformdirs", "urllib3"]
+dependencies = ["platformdirs >= 3.0.0", "urllib3 >= 1.26.0"]
 
 # [project.urls]
 # Homepage = "https://holoviews.org"
@@ -52,7 +52,19 @@ addopts = ["--strict-config", "--strict-markers", "--color=yes"]
 minversion = "7"
 xfail_strict = true
 log_cli_level = "INFO"
-filterwarnings = []
+filterwarnings = [
+    "error",
+    # 2025-03: Dask on Python 3.9 warning because dask-expr is not installed.
+    # FutureWarning: Dask dataframe query planning is disabled because dask-expr is not installed.
+    "ignore::FutureWarning:dask.dataframe",
+    # 2025-03: Dask warning when using an old version of PyArrow in the min-deps tests.
+    # 2025-03: Warning emitted when importing numpy/xarray before netCDF4.
+    # RuntimeWarning: numpy.ndarray size changed, may indicate binary incompatibility. Expected 16 from C header, got 96 from PyObject
+    "ignore:numpy.ndarray size changed, may indicate binary incompatibility. Expected 16 from C header, got 96 from PyObject:RuntimeWarning",
+    # 2025-03: Dask warning when using an old version of PyArrow in the min-deps tests.
+    # UserWarning: You are using pyarrow version 14.0.0 which is known to be insecure. See https://www.cve.org/CVERecord?id=CVE-2023-47248 for further details. Please upgrade to pyarrow>=14.0.1 or install pyarrow-hotfix to patch your current version.
+    "ignore:You are using pyarrow version 14.0.0 which is known to be insecure:UserWarning:dask.dataframe",
+]
 
 [tool.ruff]
 line-length = 99

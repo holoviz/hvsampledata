@@ -5,13 +5,14 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_GRIDDED_LOOKUP
 
-datasets = [hvs.airplane, hvs.air_temperature]
+datasets = [hvs.air_temperature]
 
 
 @pytest.mark.parametrize("dataset", datasets)
 @pytest.mark.parametrize("engine", list(_EAGER_GRIDDED_LOOKUP))
 def test_eager_load(dataset, engine):
     pytest.importorskip("xarray")
+    pytest.importorskip("netCDF4")
     df = dataset(engine=engine)
     if engine == "xarray":
         import xarray as xr
@@ -24,6 +25,7 @@ def test_eager_load(dataset, engine):
 
 def test_air_temperature():
     pytest.importorskip("xarray")
+    pytest.importorskip("netCDF4")
     import numpy as np
 
     ds = hvs.air_temperature("xarray")

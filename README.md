@@ -4,12 +4,10 @@ Shared datasets for the HoloViz projects
 
 Datasets:
 
-| Name             | Type    | Online |
-| ---------------- | ------- | ------ |
-| penguins         | Tabular | No     |
-| large_timeseries | Tabular | Yes    |
-| airplane         | Gridded | No     |
-| air_temperature  | Gridded | Yes    |
+| Name            | Type    | Included |
+| --------------- | ------- | -------- |
+| air_temperature | Gridded | Yes      |
+| penguins        | Tabular | Yes      |
 
 ## Developer guide
 

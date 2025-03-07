@@ -42,41 +42,6 @@ def penguins(
     lazy: Literal[True] = True,
 ) -> dd.DataFrame: ...
 @overload
-def large_time_series(
-    engine: Literal["pandas"],
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[False] = False,
-) -> pd.DataFrame: ...
-@overload
-def large_time_series(
-    engine: Literal["polars"],
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[False] = False,
-) -> pl.DataFrame: ...
-@overload
-def large_time_series(
-    engine: Literal["polars"],
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[True] = True,
-) -> pl.LazyFrame: ...
-@overload
-def large_time_series(
-    engine: Literal["dask"],
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    lazy: Literal[True] = True,
-) -> dd.DataFrame: ...
-@overload
-def airplane(
-    engine: Literal["xarray"],
-    *,
-    engine_kwargs: dict[str, Any] | None = None,
-    # lazy: Literal[False] = False,
-) -> xr.Dataset: ...
-@overload
 def air_temperature(
     engine: Literal["xarray"],
     *,

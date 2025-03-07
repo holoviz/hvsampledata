@@ -5,7 +5,7 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.penguins, hvs.large_timeseries]
+datasets = [hvs.penguins]
 
 
 @pytest.mark.parametrize("dataset", datasets)
