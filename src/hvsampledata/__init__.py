@@ -168,6 +168,7 @@ def air_temperature(
         engine_kwargs=engine_kwargs,
     )
     if str(ds.dtypes["air"]) == "float32":
+        # Float32 with older version of xarray/netcdf4.
         ds = ds.astype("float64")
     return ds
 
