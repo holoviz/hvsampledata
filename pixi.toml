@@ -50,8 +50,8 @@ no-default-feature = true
 nomkl = "*"
 pip = "*"
 # Required
-platformdirs = ">=4.0.0"
-urllib3 = ">=2.1.0"
+platformdirs = ">=3.0.0"
+urllib3 = ">=1.26.0"
 
 [feature.required.tasks]
 # download-data = 'python scripts/download_data.py'
@@ -63,9 +63,9 @@ PYTHONIOENCODING = "utf-8"
 [feature.min-pins.dependencies]
 # Min python
 python = "3.9.*"
-platformdirs = "==4.0.0"
 # Min required
-urllib3 = "==2.1.0"
+platformdirs = "==3.0.0"
+urllib3 = "==1.26.0"
 dask-core = "==2024.1.0"
 # Min optional
 pandas = "==2.1.0"
