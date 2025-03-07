@@ -54,6 +54,10 @@ xfail_strict = true
 log_cli_level = "INFO"
 filterwarnings = [
     "error",
+    # 2025-03: Dask on Python 3.9 warning because dask-expr is not installed.
+    # FutureWarning: Dask dataframe query planning is disabled because dask-expr is not installed.
+    "ignore::FutureWarning:dask.dataframe",
+    # 2025-03: Dask warning when using an old version of PyArrow in the min-deps tests.
     # 2025-03: Warning emitted when importing numpy/xarray before netCDF4.
     # RuntimeWarning: numpy.ndarray size changed, may indicate binary incompatibility. Expected 16 from C header, got 96 from PyObject
     "ignore:numpy.ndarray size changed, may indicate binary incompatibility. Expected 16 from C header, got 96 from PyObject:RuntimeWarning",
