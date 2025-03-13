@@ -6,12 +6,14 @@ Currently available datasets:
 | ---------------- | ------- | -------- |
 | air_temperature  | Gridded | Yes      |
 | penguins         | Tabular | Yes      |
+| earthquake       | Tabular | Yes      |
 
 Use it with:
 
 >>> import hvsampledata
 >>> df = hvsampledata.penguins("pandas")
 >>> ds = hvsampledata.air_temperature("xarray")
+>>> df = hvsampledata.earthquake("pandas")
 
 """
 
@@ -99,6 +101,69 @@ def penguins(
     return tab
 
 
+def earthquake(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: bool = False,
+):
+    """Earthquake tabular dataset.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (lazy=True).
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `read_csv`, by default None.
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container, by default False.
+
+    Description
+    -----------
+    This dataset from the USGS Earthquake Catalog provides detailed information on global seismic events,
+    including parameters such as date, time, location (latitude and longitude), depth, magnitude, and event type.
+    This comprehensive resource supports earthquake monitoring, research, and hazard assessment efforts.
+    Retrieved from https://earthquake.usgs.gov/earthquakes
+
+    Schema
+    ------
+    | name        | type   | description                                                                                                 |
+    |:------------|:-------|:------------------------------------------------------------------------------------------------------------|
+    | time        | object | Time when the event occurred. Times are reported in milliseconds since the epoch (1970-01-01T00:00:00.000Z) |
+    | latitude    | float  | Decimal degrees latitude. Negative values for southern latitudes.                                           |
+    | longitude   | float  | Decimal degrees longitude. Negative values for western longitudes.                                          |
+    | depth       | float  | Depth of the event in kilometers.                                                                           |
+    | depth_class | object | The depth category derived from the depth column.                                                           |
+    | mag         | float  | The magnitude for the event.                                                                                |
+    | mag_class   | object | The magnitude category derived from the mag column.                                                         |
+    | place       | object | Textual description of named geographic region near to the event.                                           |
+
+    Source
+    ------
+    `earthquake.csv` dataset courtesy of the U.S. Geological Survey
+    https://www.usgs.gov/programs/earthquake-hazards, with 6 months of data
+    selected from Jan. to Jun., 2024 along the so called Pacific Ring of Fire region.
+
+    License
+    -------
+    U.S. Public domain
+    Data available from U.S. Geological Survey, National Geospatial Program.
+    Visit the USGS at https://usgs.gov.
+
+    """
+    if engine == "polars":
+        engine_kwargs = {"null_values": "NA"} | (engine_kwargs or {})
+    tab = _load_tabular(
+        "earthquake.csv",
+        format="csv",
+        engine=engine,
+        engine_kwargs=engine_kwargs,
+        lazy=lazy,
+    )
+    return tab
+
+
 # -----------------------------------------------------------------------------
 # Gridded data
 # -----------------------------------------------------------------------------
@@ -173,8 +238,4 @@ def air_temperature(
     return ds
 
 
-__all__ = (
-    "__version__",
-    "air_temperature",
-    "penguins",
-)
+__all__ = ("__version__", "air_temperature", "earthquake", "penguins")

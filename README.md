@@ -13,6 +13,7 @@ Datasets:
 | --------------- | ------- | -------- |
 | air_temperature | Gridded | Yes      |
 | penguins        | Tabular | Yes      |
+| earthquake      | Tabular | Yes      |
 
 ## Developer guide
 

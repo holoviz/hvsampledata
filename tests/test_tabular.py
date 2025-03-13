@@ -5,7 +5,7 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.penguins]
+datasets = [hvs.penguins, hvs.earthquake]
 
 
 @pytest.mark.parametrize("dataset", datasets)
@@ -117,6 +117,120 @@ def test_penguins_schema_lazy(engine):
             "sex": pl.String,
             "year": pl.Int64,
         }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_eager_load_earthquake(engine):
+    pytest.importorskip(engine)
+    df = hvs.earthquake(engine=engine)
+    if engine == "pandas":
+        import pandas as pd
+
+        assert isinstance(df, pd.DataFrame)
+    elif engine == "polars":
+        import polars as pl
+
+        assert isinstance(df, pl.DataFrame)
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_lazy_load_earthquake(engine):
+    pytest.importorskip(engine)
+    df = hvs.earthquake(engine=engine, lazy=True)
+    if engine == "polars":
+        import polars as pl
+
+        assert isinstance(df, pl.LazyFrame)
+    elif engine == "dask":
+        import dask.dataframe as dd
+
+        assert isinstance(df, dd.DataFrame)
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_earthquake_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.earthquake(engine=engine)
+    if engine == "pandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "time": np.dtype("O"),
+                "latitude": np.dtype("float64"),
+                "longitude": np.dtype("float64"),
+                "depth": np.dtype("float64"),
+                "depth_class": np.dtype("O"),
+                "mag": np.dtype("float64"),
+                "mag_class": np.dtype("O"),
+                "place": np.dtype("O"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        expected_schema = {
+            "time": pl.String,
+            "latitude": pl.Float64,
+            "longitude": pl.Float64,
+            "depth": pl.Float64,
+            "depth_class": pl.String,
+            "mag": pl.Float64,
+            "mag_class": pl.String,
+            "place": pl.String,
+        }
+        assert df.schema == expected_schema
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_earthquake_schema_lazy(engine):
+    pytest.importorskip(engine)
+    df = hvs.earthquake(engine=engine, lazy=True)
+    if engine == "dask":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "time": pd.StringDtype("pyarrow"),
+                "latitude": np.dtype("float64"),
+                "longitude": np.dtype("float64"),
+                "depth": np.dtype("float64"),
+                "depth_class": pd.StringDtype("pyarrow"),
+                "mag": np.dtype("float64"),
+                "mag_class": pd.StringDtype("pyarrow"),
+                "place": pd.StringDtype("pyarrow"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        expected_schema = {
+            "time": pl.String,
+            "latitude": pl.Float64,
+            "longitude": pl.Float64,
+            "depth": pl.Float64,
+            "depth_class": pl.String,
+            "mag": pl.Float64,
+            "mag_class": pl.String,
+            "place": pl.String,
+        }
+        assert df.collect_schema() == expected_schema
     else:
         msg = "Not valid engine"
         raise ValueError(msg)
