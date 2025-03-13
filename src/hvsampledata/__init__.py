@@ -128,16 +128,16 @@ def earthquake(
 
     Schema
     ------
-    | name        | type   | description                                                                                                 |
-    |:------------|:-------|:------------------------------------------------------------------------------------------------------------|
-    | time        | object | Time when the event occurred. Times are reported in milliseconds since the epoch (1970-01-01T00:00:00.000Z) |
-    | latitude    | float  | Decimal degrees latitude. Negative values for southern latitudes.                                           |
-    | longitude   | float  | Decimal degrees longitude. Negative values for western longitudes.                                          |
-    | depth       | float  | Depth of the event in kilometers.                                                                           |
-    | depth_class | object | The depth category derived from the depth column.                                                           |
-    | mag         | float  | The magnitude for the event.                                                                                |
-    | mag_class   | object | The magnitude category derived from the mag column.                                                         |
-    | place       | object | Textual description of named geographic region near to the event.                                           |
+    | name        | type       | description                                                         |
+    |:------------|:-----------|:--------------------------------------------------------------------|
+    | time        | datetime   | Time when the event occurred.                                       |
+    | latitude    | float      | Decimal degrees latitude. Negative values for southern latitudes.   |
+    | longitude   | float      | Decimal degrees longitude. Negative values for western longitudes   |
+    | depth       | float      | Depth of the event in kilometers.                                   |
+    | depth_class | object     | The depth category derived from the depth column.                   |
+    | mag         | float      | The magnitude for the event.                                        |
+    | mag_class   | object     | The magnitude category derived from the mag column.                 |
+    | place       | object     | Textual description of named geographic region near to the event.   |
 
     Source
     ------
@@ -161,6 +161,22 @@ def earthquake(
         engine_kwargs=engine_kwargs,
         lazy=lazy,
     )
+    # Convert the 'time' column to datetime
+    if engine == "pandas":
+        import pandas as pd
+
+        tab["time"] = pd.to_datetime(tab["time"], format="mixed", utc=True)
+    elif engine == "dask":
+        import dask.dataframe as dd
+
+        tab["time"] = dd.to_datetime(tab["time"], format="mixed", utc=True)
+    elif engine == "polars":
+        import polars as pl
+
+        tab = tab.with_columns(
+            pl.col("time").str.strptime(pl.Date, format="%Y-%m-%d %H:%M:%S%.f%z", strict=False)
+        )
+
     return tab
 
 
