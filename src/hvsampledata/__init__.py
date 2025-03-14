@@ -130,20 +130,20 @@ def earthquake(
     ------
     | name        | type       | description                                                         |
     |:------------|:-----------|:--------------------------------------------------------------------|
-    | time        | datetime   | Time when the event occurred.                                       |
+    | time        | datetime   | UTC Time when the event occurred.                                   |
     | latitude    | float      | Decimal degrees latitude. Negative values for southern latitudes.   |
     | longitude   | float      | Decimal degrees longitude. Negative values for western longitudes   |
     | depth       | float      | Depth of the event in kilometers.                                   |
-    | depth_class | object     | The depth category derived from the depth column.                   |
+    | depth_class | string     | The depth category derived from the depth column.                   |
     | mag         | float      | The magnitude for the event.                                        |
-    | mag_class   | object     | The magnitude category derived from the mag column.                 |
-    | place       | object     | Textual description of named geographic region near to the event.   |
+    | mag_class   | string     | The magnitude category derived from the mag column.                 |
+    | place       | string     | Textual description of named geographic region near to the event.   |
 
     Source
     ------
     `earthquake.csv` dataset courtesy of the U.S. Geological Survey
     https://www.usgs.gov/programs/earthquake-hazards, with 6 months of data
-    selected from Jan. to Jun., 2024 along the so called Pacific Ring of Fire region.
+    selected from January to June 2024 along the Pacific Ring of Fire region.
 
     License
     -------
@@ -152,8 +152,11 @@ def earthquake(
     Visit the USGS at https://usgs.gov.
 
     """
+    engine_kwargs = engine_kwargs or {}
     if engine == "polars":
-        engine_kwargs = {"null_values": "NA"} | (engine_kwargs or {})
+        engine_kwargs = {"try_parse_dates": True} | engine_kwargs
+    else:
+        engine_kwargs = {"parse_dates": ["time"]} | engine_kwargs
     tab = _load_tabular(
         "earthquake.csv",
         format="csv",
@@ -161,21 +164,6 @@ def earthquake(
         engine_kwargs=engine_kwargs,
         lazy=lazy,
     )
-    # Convert the 'time' column to datetime
-    if engine == "pandas":
-        import pandas as pd
-
-        tab["time"] = pd.to_datetime(tab["time"], format="mixed", utc=True)
-    elif engine == "dask":
-        import dask.dataframe as dd
-
-        tab["time"] = dd.to_datetime(tab["time"], format="mixed", utc=True)
-    elif engine == "polars":
-        import polars as pl
-
-        tab = tab.with_columns(
-            pl.col("time").str.strptime(pl.Date, format="%Y-%m-%d %H:%M:%S%.f%z", strict=False)
-        )
 
     return tab
 
