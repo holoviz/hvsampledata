@@ -142,8 +142,8 @@ def earthquake(
     Source
     ------
     `earthquake.csv` dataset courtesy of the U.S. Geological Survey
-    https://www.usgs.gov/programs/earthquake-hazards, with 6 months of data
-    selected from January to June 2024 along the Pacific Ring of Fire region.
+    https://www.usgs.gov/programs/earthquake-hazards, with 1 year of data
+    selected from January to December 2024 along the Pacific Ring of Fire region.
 
     License
     -------
