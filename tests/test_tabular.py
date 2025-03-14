@@ -166,7 +166,7 @@ def test_earthquake_schema(engine):
 
         expected_dtypes = pd.Series(
             {
-                "time": pd.DatetimeTZDtype("ns", "UTC"),
+                "time": np.dtype("datetime64[ns]"),
                 "latitude": np.dtype("float64"),
                 "longitude": np.dtype("float64"),
                 "depth": np.dtype("float64"),
@@ -181,7 +181,7 @@ def test_earthquake_schema(engine):
         import polars as pl
 
         expected_schema = {
-            "time": pl.Date,
+            "time": pl.Datetime(time_unit="us", time_zone=None),
             "latitude": pl.Float64,
             "longitude": pl.Float64,
             "depth": pl.Float64,
@@ -206,7 +206,7 @@ def test_earthquake_schema_lazy(engine):
 
         expected_dtypes = pd.Series(
             {
-                "time": pd.DatetimeTZDtype("ns", "UTC"),
+                "time": np.dtype("datetime64[ns]"),
                 "latitude": np.dtype("float64"),
                 "longitude": np.dtype("float64"),
                 "depth": np.dtype("float64"),
@@ -221,7 +221,7 @@ def test_earthquake_schema_lazy(engine):
         import polars as pl
 
         expected_schema = {
-            "time": pl.Date,
+            "time": pl.Datetime(time_unit="us", time_zone=None),
             "latitude": pl.Float64,
             "longitude": pl.Float64,
             "depth": pl.Float64,
