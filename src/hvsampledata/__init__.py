@@ -5,15 +5,14 @@ Currently available datasets:
 | Name             | Type    | Included |
 | ---------------- | ------- | -------- |
 | air_temperature  | Gridded | Yes      |
-| penguins         | Tabular | Yes      |
 | earthquake       | Tabular | Yes      |
+| penguins         | Tabular | Yes      |
 
 Use it with:
 
 >>> import hvsampledata
->>> df = hvsampledata.penguins("pandas")
 >>> ds = hvsampledata.air_temperature("xarray")
->>> df = hvsampledata.earthquake("pandas")
+>>> df = hvsampledata.penguins("pandas")
 
 """
 
