@@ -167,12 +167,16 @@ def test_earthquake_schema(engine):
         expected_dtypes = pd.Series(
             {
                 "time": np.dtype("datetime64[ns]"),
-                "latitude": np.dtype("float64"),
-                "longitude": np.dtype("float64"),
+                "lat": np.dtype("float64"),
+                "lon": np.dtype("float64"),
                 "depth": np.dtype("float64"),
-                "depth_class": np.dtype("O"),
+                "depth_class": pd.CategoricalDtype(
+                    categories=["Shallow", "Intermediate", "Deep"], ordered=True
+                ),
                 "mag": np.dtype("float64"),
-                "mag_class": np.dtype("O"),
+                "mag_class": pd.CategoricalDtype(
+                    categories=["Light", "Moderate", "Strong", "Major"], ordered=True
+                ),
                 "place": np.dtype("O"),
             }
         )
@@ -182,12 +186,12 @@ def test_earthquake_schema(engine):
 
         expected_schema = {
             "time": pl.Datetime(time_unit="us", time_zone=None),
-            "latitude": pl.Float64,
-            "longitude": pl.Float64,
+            "lat": pl.Float64,
+            "lon": pl.Float64,
             "depth": pl.Float64,
-            "depth_class": pl.String,
+            "depth_class": pl.Enum(categories=["Shallow", "Intermediate", "Deep"]),
             "mag": pl.Float64,
-            "mag_class": pl.String,
+            "mag_class": pl.Enum(categories=["Light", "Moderate", "Strong", "Major"]),
             "place": pl.String,
         }
         assert df.schema == expected_schema
@@ -207,12 +211,16 @@ def test_earthquake_schema_lazy(engine):
         expected_dtypes = pd.Series(
             {
                 "time": np.dtype("datetime64[ns]"),
-                "latitude": np.dtype("float64"),
-                "longitude": np.dtype("float64"),
+                "lat": np.dtype("float64"),
+                "lon": np.dtype("float64"),
                 "depth": np.dtype("float64"),
-                "depth_class": pd.StringDtype("pyarrow"),
+                "depth_class": pd.CategoricalDtype(
+                    categories=["Shallow", "Intermediate", "Deep"], ordered=True
+                ),
                 "mag": np.dtype("float64"),
-                "mag_class": pd.StringDtype("pyarrow"),
+                "mag_class": pd.CategoricalDtype(
+                    categories=["Light", "Moderate", "Strong", "Major"], ordered=True
+                ),
                 "place": pd.StringDtype("pyarrow"),
             }
         )
@@ -222,15 +230,42 @@ def test_earthquake_schema_lazy(engine):
 
         expected_schema = {
             "time": pl.Datetime(time_unit="us", time_zone=None),
-            "latitude": pl.Float64,
-            "longitude": pl.Float64,
+            "lat": pl.Float64,
+            "lon": pl.Float64,
             "depth": pl.Float64,
-            "depth_class": pl.String,
+            "depth_class": pl.Enum(categories=["Shallow", "Intermediate", "Deep"]),
             "mag": pl.Float64,
-            "mag_class": pl.String,
+            "mag_class": pl.Enum(categories=["Light", "Moderate", "Strong", "Major"]),
             "place": pl.String,
         }
         assert df.collect_schema() == expected_schema
     else:
         msg = "Not valid engine"
         raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", ["pandas", "polars"])  # dask test keep failing
+def test_earthquake_category_ordering(engine):
+    pytest.importorskip(engine)
+    df = hvs.earthquake(engine=engine)
+    if engine == "pandas":
+        import pandas as pd
+
+        assert isinstance(df["depth_class"].dtype, pd.CategoricalDtype)
+        cat_depth = df["depth_class"].cat
+        assert cat_depth.ordered
+        assert list(cat_depth.categories) == ["Shallow", "Intermediate", "Deep"]
+
+        assert isinstance(df["mag_class"].dtype, pd.CategoricalDtype)
+        cat_mag = df["mag_class"].cat
+        assert cat_mag.ordered
+        assert list(cat_mag.categories) == ["Light", "Moderate", "Strong", "Major"]
+    else:
+        pytest.importorskip(engine)
+        import polars as pl
+
+        schema = df.schema
+        expected_depth_type_str = str(pl.Enum(["Shallow", "Intermediate", "Deep"]))
+        expected_mag_type_str = str(pl.Enum(["Light", "Moderate", "Strong", "Major"]))
+        assert str(schema["depth_class"]) == expected_depth_type_str
+        assert str(schema["mag_class"]) == expected_mag_type_str
