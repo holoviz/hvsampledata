@@ -5,7 +5,7 @@ Currently available datasets:
 | Name             | Type    | Included |
 | ---------------- | ------- | -------- |
 | air_temperature  | Gridded | Yes      |
-| earthquake       | Tabular | Yes      |
+| earthquakes      | Tabular | Yes      |
 | penguins         | Tabular | Yes      |
 
 Use it with:
@@ -100,13 +100,13 @@ def penguins(
     return tab
 
 
-def earthquake(
+def earthquakes(
     engine: str,
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
 ):
-    """Earthquake tabular dataset.
+    """Earthquakes tabular dataset.
 
     Parameters
     ----------
@@ -153,7 +153,7 @@ def earthquake(
 
     Source
     ------
-    `earthquake.csv` dataset courtesy of the U.S. Geological Survey
+    `earthquakes.csv` dataset courtesy of the U.S. Geological Survey
     https://www.usgs.gov/programs/earthquake-hazards, with 4 months of data selected
     from April to July 2024 along the Pacific Ring of Fire region (lat=(-10,10), lon=110,140)
 
@@ -185,7 +185,7 @@ def earthquake(
             "dtype": {"depth_class": "category", "mag_class": "category"},
         } | engine_kwargs
     tab = _load_tabular(
-        "earthquake.csv",
+        "earthquakes.csv",
         format="csv",
         engine=engine,
         engine_kwargs=engine_kwargs,
@@ -293,4 +293,4 @@ def air_temperature(
     return ds
 
 
-__all__ = ("__version__", "air_temperature", "earthquake", "penguins")
+__all__ = ("__version__", "air_temperature", "earthquakes", "penguins")

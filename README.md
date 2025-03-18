@@ -12,7 +12,7 @@ Datasets:
 | Name            | Type    | Included |
 | --------------- | ------- | -------- |
 | air_temperature | Gridded | Yes      |
-| earthquake      | Tabular | Yes      |
+| earthquakes     | Tabular | Yes      |
 | penguins        | Tabular | Yes      |
 
 ## Developer guide

@@ -5,7 +5,7 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.penguins, hvs.earthquake]
+datasets = [hvs.penguins, hvs.earthquakes]
 
 
 @pytest.mark.parametrize("dataset", datasets)
@@ -123,9 +123,9 @@ def test_penguins_schema_lazy(engine):
 
 
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
-def test_eager_load_earthquake(engine):
+def test_eager_load_earthquakes(engine):
     pytest.importorskip(engine)
-    df = hvs.earthquake(engine=engine)
+    df = hvs.earthquakes(engine=engine)
     if engine == "pandas":
         import pandas as pd
 
@@ -142,7 +142,7 @@ def test_eager_load_earthquake(engine):
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
 def test_lazy_load_earthquake(engine):
     pytest.importorskip(engine)
-    df = hvs.earthquake(engine=engine, lazy=True)
+    df = hvs.earthquakes(engine=engine, lazy=True)
     if engine == "polars":
         import polars as pl
 
@@ -157,9 +157,9 @@ def test_lazy_load_earthquake(engine):
 
 
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
-def test_earthquake_schema(engine):
+def test_earthquakes_schema(engine):
     pytest.importorskip(engine)
-    df = hvs.earthquake(engine=engine)
+    df = hvs.earthquakes(engine=engine)
     if engine == "pandas":
         import numpy as np
         import pandas as pd
@@ -201,9 +201,9 @@ def test_earthquake_schema(engine):
 
 
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
-def test_earthquake_schema_lazy(engine):
+def test_earthquakes_schema_lazy(engine):
     pytest.importorskip(engine)
-    df = hvs.earthquake(engine=engine, lazy=True)
+    df = hvs.earthquakes(engine=engine, lazy=True)
     if engine == "dask":
         import numpy as np
         import pandas as pd
@@ -245,9 +245,9 @@ def test_earthquake_schema_lazy(engine):
 
 
 @pytest.mark.parametrize("engine", ["pandas", "polars"])  # dask test keep failing
-def test_earthquake_category_ordering(engine):
+def test_earthquakes_category_ordering(engine):
     pytest.importorskip(engine)
-    df = hvs.earthquake(engine=engine)
+    df = hvs.earthquakes(engine=engine)
     if engine == "pandas":
         import pandas as pd
 
