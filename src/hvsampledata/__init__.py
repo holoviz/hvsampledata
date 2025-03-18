@@ -120,10 +120,9 @@ def earthquakes(
 
     Description
     -----------
-    This dataset from the USGS Earthquake Catalog provides detailed information on global seismic events,
-    including parameters such as date, time, location (latitude and longitude), depth, magnitude, and event type.
-    This comprehensive resource supports earthquake monitoring, research, and hazard assessment efforts.
-    Retrieved from https://earthquake.usgs.gov/earthquakes
+    Tabular record of earthquake events from the USGS Earthquake Catalog that provides detailed
+    information including parameters such as time, location as latitude/longitude coordinates
+    and place name, depth, and magnitude. The dataset contains 596 events.
 
     Note: The columns `depth_class` and `mag_class` were created by categorizing numerical values from
     the original dataset using custom-defined binning:
@@ -155,7 +154,7 @@ def earthquakes(
     ------
     `earthquakes.csv` dataset courtesy of the U.S. Geological Survey
     https://www.usgs.gov/programs/earthquake-hazards, with 4 months of data selected
-    from April to July 2024 along the Pacific Ring of Fire region (lat=(-10,10), lon=110,140)
+    from April to July 2024 along the Pacific Ring of Fire region (lat=(-10,10), lon=(110,140))
 
     License
     -------
