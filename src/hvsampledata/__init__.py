@@ -164,11 +164,26 @@ def earthquake(
     Visit the USGS at https://usgs.gov.
 
     """
+    depth_order = ["Shallow", "Intermediate", "Deep"]
+    mag_order = ["Light", "Moderate", "Strong", "Major"]
     engine_kwargs = engine_kwargs or {}
+
+    # convert `time` column to datetime and `mag_class` and `depth_class` to categories
     if engine == "polars":
-        engine_kwargs = {"try_parse_dates": True} | engine_kwargs
+        import polars as pl
+
+        engine_kwargs = {
+            "try_parse_dates": True,
+            "schema_overrides": {
+                "depth_class": pl.Enum(depth_order),
+                "mag_class": pl.Enum(mag_order),
+            },
+        } | engine_kwargs
     else:
-        engine_kwargs = {"parse_dates": ["time"]} | engine_kwargs
+        engine_kwargs = {
+            "parse_dates": ["time"],
+            "dtype": {"depth_class": "category", "mag_class": "category"},
+        } | engine_kwargs
     tab = _load_tabular(
         "earthquake.csv",
         format="csv",
@@ -176,6 +191,30 @@ def earthquake(
         engine_kwargs=engine_kwargs,
         lazy=lazy,
     )
+
+    # Convert `depth_class`` and `mag_class`` to ordered categorical types when using pandas or dask
+    if engine != "polars":
+        if engine == "dask":
+            if lazy:
+                # Return a dask dataframe
+                import pandas as pd
+
+                tab = tab.map_partitions(
+                    lambda df: df.assign(
+                        depth_class=pd.Categorical(
+                            df["depth_class"], categories=depth_order, ordered=True
+                        ),
+                        mag_class=pd.Categorical(
+                            df["mag_class"], categories=mag_order, ordered=True
+                        ),
+                    )
+                )
+                return tab
+            else:
+                # Return a pandas dataframe
+                tab = tab.compute()
+        tab["depth_class"] = tab["depth_class"].cat.reorder_categories(depth_order, ordered=True)
+        tab["mag_class"] = tab["mag_class"].cat.reorder_categories(mag_order, ordered=True)
 
     return tab
 
