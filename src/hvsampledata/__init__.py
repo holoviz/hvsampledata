@@ -125,13 +125,26 @@ def earthquake(
     This comprehensive resource supports earthquake monitoring, research, and hazard assessment efforts.
     Retrieved from https://earthquake.usgs.gov/earthquakes
 
+    Note: The columns `depth_class` and `mag_class` were created by categorizing numerical values from
+    the original dataset using custom-defined binning:
+
+    ```python
+    depth_bins = [-np.inf, 70, 300, np.inf]
+    depth_names = ['Shallow', 'Intermediate', 'Deep']
+    depth_class = pd.cut(df['depth'], bins=depth_bins, labels=depth_names, ordered=True)
+
+    mag_bins = [3.9, 4.9, 5.9, 6.9, 7.9]
+    mag_names = ['Light', 'Moderate', 'Strong', 'Major']
+    mag_class = pd.cut(df['mag'], bins=mag_bins, labels=mag_names, ordered=True)
+    ```
+
     Schema
     ------
     | name        | type       | description                                                         |
     |:------------|:-----------|:--------------------------------------------------------------------|
     | time        | datetime   | UTC Time when the event occurred.                                   |
-    | latitude    | float      | Decimal degrees latitude. Negative values for southern latitudes.   |
-    | longitude   | float      | Decimal degrees longitude. Negative values for western longitudes   |
+    | lat         | float      | Decimal degrees latitude. Negative values for southern latitudes.   |
+    | lon         | float      | Decimal degrees longitude. Negative values for western longitudes   |
     | depth       | float      | Depth of the event in kilometers.                                   |
     | depth_class | string     | The depth category derived from the depth column.                   |
     | mag         | float      | The magnitude for the event.                                        |
@@ -141,8 +154,8 @@ def earthquake(
     Source
     ------
     `earthquake.csv` dataset courtesy of the U.S. Geological Survey
-    https://www.usgs.gov/programs/earthquake-hazards, with 1 year of data
-    selected from January to December 2024 along the Pacific Ring of Fire region.
+    https://www.usgs.gov/programs/earthquake-hazards, with 4 months of data selected
+    from April to July 2024 along the Pacific Ring of Fire region (lat=(-10,10), lon=110,140)
 
     License
     -------
