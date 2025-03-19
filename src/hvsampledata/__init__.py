@@ -125,17 +125,25 @@ def earthquakes(
     and place name, depth, and magnitude. The dataset contains 596 events.
 
     Note: The columns `depth_class` and `mag_class` were created by categorizing numerical values from
-    the original dataset using custom-defined binning:
+    the `depth` and `mag` columns in the original dataset using custom-defined binning:
 
-    ```python
-    depth_bins = [-np.inf, 70, 300, np.inf]
-    depth_names = ['Shallow', 'Intermediate', 'Deep']
-    depth_class = pd.cut(df['depth'], bins=depth_bins, labels=depth_names, ordered=True)
+    Depth Classification
 
-    mag_bins = [3.9, 4.9, 5.9, 6.9, 7.9]
-    mag_names = ['Light', 'Moderate', 'Strong', 'Major']
-    mag_class = pd.cut(df['mag'], bins=mag_bins, labels=mag_names, ordered=True)
-    ```
+    | depth     | depth_class  |
+    |-----------|--------------|
+    | Below 70  | Shallow      |
+    | 70 - 300  | Intermediate |
+    | Above 300 | Deep         |
+
+    Magnitude Classification
+
+    | mag         | mag_class |
+    |-------------|-----------|
+    | 3.9 - <4.9  | Light     |
+    | 4.9 - <5.9  | Moderate  |
+    | 5.9 - <6.9  | Strong    |
+    | 6.9 - <7.9  | Major     |
+
 
     Schema
     ------
@@ -145,9 +153,9 @@ def earthquakes(
     | lat         | float      | Decimal degrees latitude. Negative values for southern latitudes.   |
     | lon         | float      | Decimal degrees longitude. Negative values for western longitudes   |
     | depth       | float      | Depth of the event in kilometers.                                   |
-    | depth_class | string     | The depth category derived from the depth column.                   |
+    | depth_class | category   | The depth category derived from the depth column.                   |
     | mag         | float      | The magnitude for the event.                                        |
-    | mag_class   | string     | The magnitude category derived from the mag column.                 |
+    | mag_class   | category   | The magnitude category derived from the mag column.                 |
     | place       | string     | Textual description of named geographic region near to the event.   |
 
     Source
