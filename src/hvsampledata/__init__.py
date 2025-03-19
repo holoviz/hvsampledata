@@ -179,43 +179,22 @@ def earthquakes(
             },
         } | engine_kwargs
     else:
+        import pandas as pd
+
         engine_kwargs = {
             "parse_dates": ["time"],
-            "dtype": {"depth_class": "category", "mag_class": "category"},
+            "dtype": {
+                "depth_class": pd.api.types.CategoricalDtype(categories=depth_order, ordered=True),
+                "mag_class": pd.api.types.CategoricalDtype(categories=mag_order, ordered=True),
+            },
         } | engine_kwargs
-    tab = _load_tabular(
+    return _load_tabular(
         "earthquakes.csv",
         format="csv",
         engine=engine,
         engine_kwargs=engine_kwargs,
         lazy=lazy,
     )
-
-    # Convert `depth_class`` and `mag_class`` to ordered categorical types when using pandas or dask
-    if engine != "polars":
-        if engine == "dask":
-            if lazy:
-                # Return a dask dataframe
-                import pandas as pd
-
-                tab = tab.map_partitions(
-                    lambda df: df.assign(
-                        depth_class=pd.Categorical(
-                            df["depth_class"], categories=depth_order, ordered=True
-                        ),
-                        mag_class=pd.Categorical(
-                            df["mag_class"], categories=mag_order, ordered=True
-                        ),
-                    )
-                )
-                return tab
-            else:
-                # Return a pandas dataframe
-                tab = tab.compute()
-        tab["depth_class"] = tab["depth_class"].cat.reorder_categories(depth_order, ordered=True)
-        tab["mag_class"] = tab["mag_class"].cat.reorder_categories(mag_order, ordered=True)
-
-    return tab
 
 
 # -----------------------------------------------------------------------------
