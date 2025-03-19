@@ -5,13 +5,14 @@ Currently available datasets:
 | Name             | Type    | Included |
 | ---------------- | ------- | -------- |
 | air_temperature  | Gridded | Yes      |
+| earthquakes      | Tabular | Yes      |
 | penguins         | Tabular | Yes      |
 
 Use it with:
 
 >>> import hvsampledata
->>> df = hvsampledata.penguins("pandas")
 >>> ds = hvsampledata.air_temperature("xarray")
+>>> df = hvsampledata.penguins("pandas")
 
 """
 
@@ -99,6 +100,111 @@ def penguins(
     return tab
 
 
+def earthquakes(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: bool = False,
+):
+    """Earthquakes tabular dataset.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (lazy=True).
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `read_csv`, by default None.
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container, by default False.
+
+    Description
+    -----------
+    Tabular record of earthquake events from the USGS Earthquake Catalog that provides detailed
+    information including parameters such as time, location as latitude/longitude coordinates
+    and place name, depth, and magnitude. The dataset contains 596 events.
+
+    Note: The columns `depth_class` and `mag_class` were created by categorizing numerical values from
+    the `depth` and `mag` columns in the original dataset using custom-defined binning:
+
+    Depth Classification
+
+    | depth     | depth_class  |
+    |-----------|--------------|
+    | Below 70  | Shallow      |
+    | 70 - 300  | Intermediate |
+    | Above 300 | Deep         |
+
+    Magnitude Classification
+
+    | mag         | mag_class |
+    |-------------|-----------|
+    | 3.9 - <4.9  | Light     |
+    | 4.9 - <5.9  | Moderate  |
+    | 5.9 - <6.9  | Strong    |
+    | 6.9 - <7.9  | Major     |
+
+
+    Schema
+    ------
+    | name        | type       | description                                                         |
+    |:------------|:-----------|:--------------------------------------------------------------------|
+    | time        | datetime   | UTC Time when the event occurred.                                   |
+    | lat         | float      | Decimal degrees latitude. Negative values for southern latitudes.   |
+    | lon         | float      | Decimal degrees longitude. Negative values for western longitudes   |
+    | depth       | float      | Depth of the event in kilometers.                                   |
+    | depth_class | category   | The depth category derived from the depth column.                   |
+    | mag         | float      | The magnitude for the event.                                        |
+    | mag_class   | category   | The magnitude category derived from the mag column.                 |
+    | place       | string     | Textual description of named geographic region near to the event.   |
+
+    Source
+    ------
+    `earthquakes.csv` dataset courtesy of the U.S. Geological Survey
+    https://www.usgs.gov/programs/earthquake-hazards, with 4 months of data selected
+    from April to July 2024 along the Pacific Ring of Fire region (lat=(-10,10), lon=(110,140))
+
+    License
+    -------
+    U.S. Public domain
+    Data available from U.S. Geological Survey, National Geospatial Program.
+    Visit the USGS at https://usgs.gov.
+
+    """
+    depth_order = ["Shallow", "Intermediate", "Deep"]
+    mag_order = ["Light", "Moderate", "Strong", "Major"]
+    engine_kwargs = engine_kwargs or {}
+
+    # convert `time` column to datetime and `mag_class` and `depth_class` to categories
+    if engine == "polars":
+        import polars as pl
+
+        engine_kwargs = {
+            "try_parse_dates": True,
+            "schema_overrides": {
+                "depth_class": pl.Enum(depth_order),
+                "mag_class": pl.Enum(mag_order),
+            },
+        } | engine_kwargs
+    else:
+        import pandas as pd
+
+        engine_kwargs = {
+            "parse_dates": ["time"],
+            "dtype": {
+                "depth_class": pd.api.types.CategoricalDtype(categories=depth_order, ordered=True),
+                "mag_class": pd.api.types.CategoricalDtype(categories=mag_order, ordered=True),
+            },
+        } | engine_kwargs
+    return _load_tabular(
+        "earthquakes.csv",
+        format="csv",
+        engine=engine,
+        engine_kwargs=engine_kwargs,
+        lazy=lazy,
+    )
+
+
 # -----------------------------------------------------------------------------
 # Gridded data
 # -----------------------------------------------------------------------------
@@ -173,8 +279,4 @@ def air_temperature(
     return ds
 
 
-__all__ = (
-    "__version__",
-    "air_temperature",
-    "penguins",
-)
+__all__ = ("__version__", "air_temperature", "earthquakes", "penguins")
