@@ -5,7 +5,7 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.penguins, hvs.earthquakes, hvs.AAPL]
+datasets = [hvs.penguins, hvs.earthquakes, hvs.apple_stocks]
 
 
 @pytest.mark.parametrize("dataset", datasets)
@@ -272,9 +272,9 @@ def test_earthquakes_category_ordering(engine):
 
 
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
-def test_AAPL_schema(engine):
+def test_apple_stocks_schema(engine):
     pytest.importorskip(engine)
-    df = hvs.AAPL(engine=engine)
+    df = hvs.apple_stocks(engine=engine)
     if engine == "pandas":
         import numpy as np
         import pandas as pd
@@ -309,9 +309,9 @@ def test_AAPL_schema(engine):
 
 
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
-def test_AAPL_schema_lazy(engine):
+def test_apple_stocks_schema_lazy(engine):
     pytest.importorskip(engine)
-    df = hvs.AAPL(engine=engine, lazy=True)
+    df = hvs.apple_stocks(engine=engine, lazy=True)
     if engine == "dask":
         import numpy as np
         import pandas as pd

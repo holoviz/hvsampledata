@@ -206,7 +206,7 @@ def earthquakes(
     )
 
 
-def AAPL(
+def apple_stocks(
     engine: str,
     *,
     engine_kwargs: dict[str, Any] | None = None,
@@ -226,7 +226,8 @@ def AAPL(
 
     Description
     -----------
-    Tabular record of Apple Inc. (AAPL) daily stock trading data from the U.S. stock market.
+    Tabular record of Apple Inc. (AAPL) daily stock trading data from the U.S. stock market
+    from January 1, 2007 to December 31, 2024.
     Each row represents a single trading day with pricing and volume information.
 
     The dataset contains the following fields:
@@ -255,7 +256,7 @@ def AAPL(
 
     Source
     ------
-    `AAPL.csv` dataset generated from historical data for Apple Inc. (AAPL) sourced from public news sources.
+    `apple_stocks.csv` dataset generated from historical data for Apple Inc. (AAPL) sourced from Yahoo Finance.
 
     License
     -------
@@ -273,7 +274,7 @@ def AAPL(
             "parse_dates": ["date"],
         } | engine_kwargs
     return _load_tabular(
-        "AAPL.csv",
+        "apple_stocks.csv",
         format="csv",
         engine=engine,
         engine_kwargs=engine_kwargs,
