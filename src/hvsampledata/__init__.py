@@ -4,6 +4,7 @@ Currently available datasets:
 
 | Name             | Type    | Included |
 | ---------------- | ------- | -------- |
+| AAPL             | Tabular | Yes      |
 | air_temperature  | Gridded | Yes      |
 | earthquakes      | Tabular | Yes      |
 | penguins         | Tabular | Yes      |
@@ -198,6 +199,32 @@ def earthquakes(
         } | engine_kwargs
     return _load_tabular(
         "earthquakes.csv",
+        format="csv",
+        engine=engine,
+        engine_kwargs=engine_kwargs,
+        lazy=lazy,
+    )
+
+
+def AAPL(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: bool = False,
+):
+    """Add Docstrings here"""
+    engine_kwargs = engine_kwargs or {}
+    # convert `date` column to datetime object
+    if engine == "polars":
+        engine_kwargs = {
+            "try_parse_dates": True,
+        } | engine_kwargs
+    else:
+        engine_kwargs = {
+            "parse_dates": ["date"],
+        } | engine_kwargs
+    return _load_tabular(
+        "AAPL.csv",
         format="csv",
         engine=engine,
         engine_kwargs=engine_kwargs,
