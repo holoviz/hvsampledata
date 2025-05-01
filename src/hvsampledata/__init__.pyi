@@ -70,6 +70,34 @@ def earthquakes(
     lazy: Literal[True] = True,
 ) -> dd.DataFrame: ...
 @overload
+def AAPL(
+    engine: Literal["pandas"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: Literal[False] = False,
+) -> pd.DataFrame: ...
+@overload
+def AAPL(
+    engine: Literal["polars"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: Literal[False] = False,
+) -> pl.DataFrame: ...
+@overload
+def AAPL(
+    engine: Literal["polars"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: Literal[True] = True,
+) -> pl.LazyFrame: ...
+@overload
+def AAPL(
+    engine: Literal["dask"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: Literal[True] = True,
+) -> dd.DataFrame: ...
+@overload
 def air_temperature(
     engine: Literal["xarray"],
     *,

@@ -96,6 +96,7 @@ __all__: tuple[str, ...]
             header,
             generate_tabular_overloads("penguins"),
             generate_tabular_overloads("earthquakes"),
+            generate_tabular_overloads("AAPL"),
             generate_gridded_overloads("air_temperature"),
             "",
         ]
