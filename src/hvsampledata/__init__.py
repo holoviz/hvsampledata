@@ -212,7 +212,56 @@ def AAPL(
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
 ):
-    """Add Docstrings here"""
+    """Apple Inc. (AAPL) stocks dataset.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (lazy=True).
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `read_csv`, by default None.
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container, by default False.
+
+    Description
+    -----------
+    Tabular record of Apple Inc. (AAPL) daily stock trading data from the U.S. stock market.
+    Each row represents a single trading day with pricing and volume information.
+
+    The dataset contains the following fields:
+
+    - `date`: The trading date.
+    - `open`: Opening price of AAPL stock on that day.
+    - `high`: Highest price reached during the trading day.
+    - `low`: Lowest price reached during the trading day.
+    - `close`: Closing price of the stock on that day.
+    - `volume`: Number of shares traded.
+    - `adj_close`: Adjusted closing price accounting for splits and dividends.
+
+    This dataset contains over 3,000 rows and was collected from public news sources.
+
+    Schema
+    ------
+    | name       | type     | description                                               |
+    |:-----------|:-------- |:----------------------------------------------------------|
+    | date       | datetime | The trading date                                          |
+    | open       | float    | Opening price of the stock on that day                    |
+    | high       | float    | Highest price of the stock during the trading day         |
+    | low        | float    | Lowest price of the stock during the trading day          |
+    | close      | float    | Closing price of the stock on that day                    |
+    | volume     | integer  | Number of shares traded                                   |
+    | adj_close  | float    | Adjusted closing price reflecting splits and dividends    |
+
+    Source
+    ------
+    `AAPL.csv` dataset generated from historical data for Apple Inc. (AAPL) sourced from public news sources.
+
+    License
+    -------
+    Data provided for demonstration and educational purposes only.
+    Users must ensure compliance with the original data providers terms of use.
+    """
     engine_kwargs = engine_kwargs or {}
     # convert `date` column to datetime object
     if engine == "polars":
