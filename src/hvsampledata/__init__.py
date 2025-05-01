@@ -4,8 +4,8 @@ Currently available datasets:
 
 | Name             | Type    | Included |
 | ---------------- | ------- | -------- |
-| apple_stocks     | Tabular | Yes      |
 | air_temperature  | Gridded | Yes      |
+| apple_stocks     | Tabular | Yes      |
 | earthquakes      | Tabular | Yes      |
 | penguins         | Tabular | Yes      |
 
