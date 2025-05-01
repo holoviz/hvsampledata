@@ -240,7 +240,7 @@ def apple_stocks(
     - `volume`: Number of shares traded.
     - `adj_close`: Adjusted closing price accounting for splits and dividends.
 
-    This dataset contains over 3,000 rows and was collected from public news sources.
+    This dataset contains over 4,500 rows and was collected from public news sources.
 
     Schema
     ------
