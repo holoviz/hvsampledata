@@ -11,6 +11,7 @@ Datasets:
 
 | Name            | Type    | Included |
 | --------------- | ------- | -------- |
+| AAPL            | Tabular | Yes      |
 | air_temperature | Gridded | Yes      |
 | earthquakes     | Tabular | Yes      |
 | penguins        | Tabular | Yes      |
