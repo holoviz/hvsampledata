@@ -11,9 +11,10 @@ Datasets:
 
 | Name            | Type    | Included |
 | --------------- | ------- | -------- |
-| apple_stocks    | Tabular | Yes      |
 | air_temperature | Gridded | Yes      |
+| apple_stocks    | Tabular | Yes      |
 | earthquakes     | Tabular | Yes      |
+| faang_stocks    | Tabular | Yes      |
 | penguins        | Tabular | Yes      |
 
 ## Developer guide
