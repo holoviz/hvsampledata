@@ -5,7 +5,7 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.penguins, hvs.earthquakes, hvs.apple_stocks]
+datasets = [hvs.penguins, hvs.earthquakes, hvs.apple_stocks, hvs.faang_stocks]
 
 
 @pytest.mark.parametrize("dataset", datasets)
@@ -339,6 +339,80 @@ def test_apple_stocks_schema_lazy(engine):
             "close": pl.Float64,
             "volume": pl.Int64,
             "adj_close": pl.Float64,
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_faang_stocks_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.faang_stocks(engine=engine)
+    if engine == "pandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "date": np.dtype("datetime64[ns]"),
+                "GOOG": np.dtype("float64"),
+                "AAPL": np.dtype("float64"),
+                "AMZN": np.dtype("float64"),
+                "FB": np.dtype("float64"),
+                "NFLX": np.dtype("float64"),
+                "MSFT": np.dtype("float64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.schema == {
+            "date": pl.Date,
+            "GOOG": pl.Float64,
+            "AAPL": pl.Float64,
+            "AMZN": pl.Float64,
+            "FB": pl.Float64,
+            "NFLX": pl.Float64,
+            "MSFT": pl.Float64,
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_faang_stocks_schema_lazy(engine):
+    pytest.importorskip(engine)
+    df = hvs.faang_stocks(engine=engine, lazy=True)
+    if engine == "dask":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "date": np.dtype("datetime64[ns]"),
+                "GOOG": np.dtype("float64"),
+                "AAPL": np.dtype("float64"),
+                "AMZN": np.dtype("float64"),
+                "FB": np.dtype("float64"),
+                "NFLX": np.dtype("float64"),
+                "MSFT": np.dtype("float64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.collect_schema() == {
+            "date": pl.Date,
+            "GOOG": pl.Float64,
+            "AAPL": pl.Float64,
+            "AMZN": pl.Float64,
+            "FB": pl.Float64,
+            "NFLX": pl.Float64,
+            "MSFT": pl.Float64,
         }
     else:
         msg = "Not valid engine"
