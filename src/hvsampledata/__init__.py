@@ -279,7 +279,49 @@ def faang_stocks(
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
 ):
-    """Add docstring here"""
+    """FAANG stocks dataset.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (lazy=True).
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `read_csv`, by default None.
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container, by default False.
+
+    Description
+    -----------
+    Tabular dataset containing weekly normalized stock prices for the FAANG companies:
+    Apple, Amazon, Google, Meta, Microsoft, and Netflix from January 2019 to December 2023.
+    Each row represents the stock values for a specific date, with the first row normalized to 1.0.
+
+    This dataset contains 105 rows and can be used to compare the relative performance of
+    each company's stock over that time period.
+
+    Schema
+    ------
+    | name       | type     | description                                    |
+    |:-----------|:---------|:-----------------------------------------------|
+    | date       | datetime | The trading date (weekly interval)             |
+    | Apple      | float    | Normalized price of Google stock               |
+    | Amazon     | float    | Normalized price of Apple stock                |
+    | Google     | float    | Normalized price of Amazon stock               |
+    | Meta       | float    | Normalized price of Facebook stock             |
+    | Microsoft  | float    | Normalized price of Netflix stock              |
+    | Netflix    | float    | Normalized price of Microsoft stock            |
+
+    Source
+    ------
+    `faang_stocks.csv` dataset derived from historical stock prices of FAANG companies,
+    normalized for comparative analysis.
+
+    License
+    -------
+    Data provided for educational and demonstration purposes only.
+    Users must ensure compliance with the original data providers terms of use.
+    """
     engine_kwargs = engine_kwargs or {}
     # convert `date` column to datetime object
     if engine == "polars":
