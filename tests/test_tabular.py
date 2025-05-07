@@ -356,12 +356,12 @@ def test_faang_stocks_schema(engine):
         expected_dtypes = pd.Series(
             {
                 "date": np.dtype("datetime64[ns]"),
-                "GOOG": np.dtype("float64"),
-                "AAPL": np.dtype("float64"),
-                "AMZN": np.dtype("float64"),
-                "FB": np.dtype("float64"),
-                "NFLX": np.dtype("float64"),
-                "MSFT": np.dtype("float64"),
+                "Apple": np.dtype("float64"),
+                "Amazon": np.dtype("float64"),
+                "Google": np.dtype("float64"),
+                "Meta": np.dtype("float64"),
+                "Microsoft": np.dtype("float64"),
+                "Netflix": np.dtype("float64"),
             }
         )
         pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
@@ -370,12 +370,12 @@ def test_faang_stocks_schema(engine):
 
         assert df.schema == {
             "date": pl.Date,
-            "GOOG": pl.Float64,
-            "AAPL": pl.Float64,
-            "AMZN": pl.Float64,
-            "FB": pl.Float64,
-            "NFLX": pl.Float64,
-            "MSFT": pl.Float64,
+            "Apple": pl.Float64,
+            "Amazon": pl.Float64,
+            "Google": pl.Float64,
+            "Meta": pl.Float64,
+            "Microsoft": pl.Float64,
+            "Netflix": pl.Float64,
         }
     else:
         msg = "Not valid engine"
@@ -393,12 +393,12 @@ def test_faang_stocks_schema_lazy(engine):
         expected_dtypes = pd.Series(
             {
                 "date": np.dtype("datetime64[ns]"),
-                "GOOG": np.dtype("float64"),
-                "AAPL": np.dtype("float64"),
-                "AMZN": np.dtype("float64"),
-                "FB": np.dtype("float64"),
-                "NFLX": np.dtype("float64"),
-                "MSFT": np.dtype("float64"),
+                "Apple": np.dtype("float64"),
+                "Amazon": np.dtype("float64"),
+                "Google": np.dtype("float64"),
+                "Meta": np.dtype("float64"),
+                "Microsoft": np.dtype("float64"),
+                "Netflix": np.dtype("float64"),
             }
         )
         pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
@@ -407,12 +407,12 @@ def test_faang_stocks_schema_lazy(engine):
 
         assert df.collect_schema() == {
             "date": pl.Date,
-            "GOOG": pl.Float64,
-            "AAPL": pl.Float64,
-            "AMZN": pl.Float64,
-            "FB": pl.Float64,
-            "NFLX": pl.Float64,
-            "MSFT": pl.Float64,
+            "Apple": pl.Float64,
+            "Amazon": pl.Float64,
+            "Google": pl.Float64,
+            "Meta": pl.Float64,
+            "Microsoft": pl.Float64,
+            "Netflix": pl.Float64,
         }
     else:
         msg = "Not valid engine"
