@@ -231,16 +231,6 @@ def apple_stocks(
     from January 1, 2007 to December 31, 2024.
     Each row represents a single trading day with pricing and volume information.
 
-    The dataset contains the following fields:
-
-    - `date`: The trading date.
-    - `open`: Opening price of AAPL stock on that day.
-    - `high`: Highest price reached during the trading day.
-    - `low`: Lowest price reached during the trading day.
-    - `close`: Closing price of the stock on that day.
-    - `volume`: Number of shares traded.
-    - `adj_close`: Adjusted closing price accounting for splits and dividends.
-
     This dataset contains over 4,500 rows and was collected from public news sources.
 
     Schema
