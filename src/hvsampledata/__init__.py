@@ -6,8 +6,8 @@ Currently available datasets:
 | ---------------- | ------- | -------- |
 | air_temperature  | Gridded | Yes      |
 | apple_stocks     | Tabular | Yes      |
-| faang_stocks     | Tabular | Yes      |
 | earthquakes      | Tabular | Yes      |
+| faang_stocks     | Tabular | Yes      |
 | penguins         | Tabular | Yes      |
 
 Use it with:
@@ -228,10 +228,10 @@ def apple_stocks(
     Description
     -----------
     Tabular record of Apple Inc. (AAPL) daily stock trading data from the U.S. stock market
-    from January 1, 2007 to December 31, 2024.
+    from January 2019 to December 2024.
     Each row represents a single trading day with pricing and volume information.
 
-    This dataset contains over 4,500 rows and was collected from public news sources.
+    This dataset contains 1509 rows and was collected from public news sources.
 
     Schema
     ------
@@ -297,20 +297,20 @@ def faang_stocks(
     Apple, Amazon, Google, Meta, Microsoft, and Netflix from January 2019 to December 2023.
     Each row represents the stock values for a specific date, with the first row normalized to 1.0.
 
-    This dataset contains 105 rows and can be used to compare the relative performance of
+    This dataset contains 261 rows and can be used to compare the relative performance of
     each company's stock over that time period.
 
     Schema
     ------
-    | name       | type     | description                                    |
-    |:-----------|:---------|:-----------------------------------------------|
-    | date       | datetime | The trading date (weekly interval)             |
-    | Apple      | float    | Normalized price of Google stock               |
-    | Amazon     | float    | Normalized price of Apple stock                |
-    | Google     | float    | Normalized price of Amazon stock               |
-    | Meta       | float    | Normalized price of Facebook stock             |
-    | Microsoft  | float    | Normalized price of Netflix stock              |
-    | Netflix    | float    | Normalized price of Microsoft stock            |
+    | name       | type     | description                            |
+    |:-----------|:---------|:---------------------------------------|
+    | date       | datetime | The trading date (weekly interval)     |
+    | Apple      | float    | Normalized price of Google stock       |
+    | Amazon     | float    | Normalized price of Apple stock        |
+    | Google     | float    | Normalized price of Amazon stock       |
+    | Meta       | float    | Normalized price of Facebook stock     |
+    | Microsoft  | float    | Normalized price of Netflix stock      |
+    | Netflix    | float    | Normalized price of Microsoft stock    |
 
     Source
     ------
@@ -415,4 +415,11 @@ def air_temperature(
     return ds
 
 
-__all__ = ("__version__", "air_temperature", "earthquakes", "penguins")
+__all__ = (
+    "__version__",
+    "air_temperature",
+    "apple_stocks",
+    "earthquakes",
+    "faang_stocks",
+    "penguins",
+)
