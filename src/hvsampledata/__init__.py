@@ -253,6 +253,7 @@ def apple_stocks(
     -------
     Data provided for demonstration and educational purposes only.
     Users must ensure compliance with the original data providers terms of use.
+    See https://legal.yahoo.com/us/en/yahoo/terms/product-atos/apiforydn/index.html
     """
     engine_kwargs = engine_kwargs or {}
     # convert `date` column to datetime object
@@ -315,12 +316,13 @@ def stocks(
     Source
     ------
     `stocks.csv` dataset derived from historical stock prices of selected Tech companies,
-    rebased for comparative analysis.
+    sourced from Yahoo Finance and rebased for comparative analysis.
 
     License
     -------
     Data provided for educational and demonstration purposes only.
     Users must ensure compliance with the original data providers terms of use.
+    See https://legal.yahoo.com/us/en/yahoo/terms/product-atos/apiforydn/index.html
     """
     engine_kwargs = engine_kwargs or {}
     # convert `date` column to datetime object
