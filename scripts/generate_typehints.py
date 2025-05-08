@@ -97,7 +97,7 @@ __all__: tuple[str, ...]
             generate_tabular_overloads("penguins"),
             generate_tabular_overloads("earthquakes"),
             generate_tabular_overloads("apple_stocks"),
-            generate_tabular_overloads("faang_stocks"),
+            generate_tabular_overloads("stocks"),
             generate_gridded_overloads("air_temperature"),
             "",
         ]

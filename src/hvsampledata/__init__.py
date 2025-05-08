@@ -7,8 +7,8 @@ Currently available datasets:
 | air_temperature  | Gridded | Yes      |
 | apple_stocks     | Tabular | Yes      |
 | earthquakes      | Tabular | Yes      |
-| faang_stocks     | Tabular | Yes      |
 | penguins         | Tabular | Yes      |
+| stocks           | Tabular | Yes      |
 
 Use it with:
 
@@ -273,13 +273,13 @@ def apple_stocks(
     )
 
 
-def faang_stocks(
+def stocks(
     engine: str,
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
 ):
-    """FAANG stocks dataset.
+    """Selected stocks dataset.
 
     Parameters
     ----------
@@ -293,9 +293,9 @@ def faang_stocks(
 
     Description
     -----------
-    Tabular dataset containing weekly normalized stock prices for the FAANG companies:
+    Tabular dataset containing weekly rebased stock prices for selected Tech companies:
     Apple, Amazon, Google, Meta, Microsoft, and Netflix from January 2019 to December 2023.
-    Each row represents the stock values for a specific date, with the first row normalized to 1.0.
+    The stock prices have been rebased to start at 1.0 from the first row.
 
     This dataset contains 261 rows and can be used to compare the relative performance of
     each company's stock over that time period.
@@ -314,8 +314,8 @@ def faang_stocks(
 
     Source
     ------
-    `faang_stocks.csv` dataset derived from historical stock prices of FAANG companies,
-    normalized for comparative analysis.
+    `stocks.csv` dataset derived from historical stock prices of selected Tech companies,
+    rebased for comparative analysis.
 
     License
     -------
@@ -333,7 +333,7 @@ def faang_stocks(
             "parse_dates": ["date"],
         } | engine_kwargs
     return _load_tabular(
-        "faang_stocks.csv",
+        "stocks.csv",
         format="csv",
         engine=engine,
         engine_kwargs=engine_kwargs,
@@ -420,6 +420,6 @@ __all__ = (
     "air_temperature",
     "apple_stocks",
     "earthquakes",
-    "faang_stocks",
     "penguins",
+    "stocks",
 )
