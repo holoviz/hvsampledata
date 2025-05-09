@@ -5,8 +5,10 @@ Currently available datasets:
 | Name             | Type    | Included |
 | ---------------- | ------- | -------- |
 | air_temperature  | Gridded | Yes      |
+| apple_stocks     | Tabular | Yes      |
 | earthquakes      | Tabular | Yes      |
 | penguins         | Tabular | Yes      |
+| stocks           | Tabular | Yes      |
 
 Use it with:
 
@@ -205,6 +207,142 @@ def earthquakes(
     )
 
 
+def apple_stocks(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: bool = False,
+):
+    """Apple Inc. (AAPL) stocks dataset.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (lazy=True).
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `read_csv`, by default None.
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container, by default False.
+
+    Description
+    -----------
+    Tabular record of Apple Inc. (AAPL) daily stock trading data from the U.S. stock market
+    from January 2019 to December 2024.
+    Each row represents a single trading day with pricing and volume information.
+
+    This dataset contains 1509 rows and was collected from public news sources.
+
+    Schema
+    ------
+    | name       | type     | description                                               |
+    |:-----------|:-------- |:----------------------------------------------------------|
+    | date       | datetime | The trading date                                          |
+    | open       | float    | Opening price of the stock on that day                    |
+    | high       | float    | Highest price of the stock during the trading day         |
+    | low        | float    | Lowest price of the stock during the trading day          |
+    | close      | float    | Closing price of the stock on that day                    |
+    | volume     | integer  | Number of shares traded                                   |
+    | adj_close  | float    | Adjusted closing price reflecting splits and dividends    |
+
+    Source
+    ------
+    `apple_stocks.csv` dataset generated from historical data for Apple Inc. (AAPL) sourced from Yahoo Finance.
+
+    License
+    -------
+    Data provided for demonstration and educational purposes only.
+    Users must ensure compliance with the original data providers terms of use.
+    See https://legal.yahoo.com/us/en/yahoo/terms/product-atos/apiforydn/index.html
+    """
+    engine_kwargs = engine_kwargs or {}
+    # convert `date` column to datetime object
+    if engine == "polars":
+        engine_kwargs = {
+            "try_parse_dates": True,
+        } | engine_kwargs
+    else:
+        engine_kwargs = {
+            "parse_dates": ["date"],
+        } | engine_kwargs
+    return _load_tabular(
+        "apple_stocks.csv",
+        format="csv",
+        engine=engine,
+        engine_kwargs=engine_kwargs,
+        lazy=lazy,
+    )
+
+
+def stocks(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: bool = False,
+):
+    """Selected stocks dataset.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (lazy=True).
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `read_csv`, by default None.
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container, by default False.
+
+    Description
+    -----------
+    Tabular dataset containing weekly rebased stock prices for selected Tech companies:
+    Apple, Amazon, Google, Meta, Microsoft, and Netflix from January 2019 to December 2023.
+    The stock prices have been rebased to start at 1.0 from the first row.
+
+    This dataset contains 261 rows and can be used to compare the relative performance of
+    each company's stock over that time period.
+
+    Schema
+    ------
+    | name       | type     | description                            |
+    |:-----------|:---------|:---------------------------------------|
+    | date       | datetime | The trading date (weekly interval)     |
+    | Apple      | float    | Normalized price of Google stock       |
+    | Amazon     | float    | Normalized price of Apple stock        |
+    | Google     | float    | Normalized price of Amazon stock       |
+    | Meta       | float    | Normalized price of Facebook stock     |
+    | Microsoft  | float    | Normalized price of Netflix stock      |
+    | Netflix    | float    | Normalized price of Microsoft stock    |
+
+    Source
+    ------
+    `stocks.csv` dataset derived from historical stock prices of selected Tech companies,
+    sourced from Yahoo Finance and rebased for comparative analysis.
+
+    License
+    -------
+    Data provided for educational and demonstration purposes only.
+    Users must ensure compliance with the original data providers terms of use.
+    See https://legal.yahoo.com/us/en/yahoo/terms/product-atos/apiforydn/index.html
+    """
+    engine_kwargs = engine_kwargs or {}
+    # convert `date` column to datetime object
+    if engine == "polars":
+        engine_kwargs = {
+            "try_parse_dates": True,
+        } | engine_kwargs
+    else:
+        engine_kwargs = {
+            "parse_dates": ["date"],
+        } | engine_kwargs
+    return _load_tabular(
+        "stocks.csv",
+        format="csv",
+        engine=engine,
+        engine_kwargs=engine_kwargs,
+        lazy=lazy,
+    )
+
+
 # -----------------------------------------------------------------------------
 # Gridded data
 # -----------------------------------------------------------------------------
@@ -279,4 +417,11 @@ def air_temperature(
     return ds
 
 
-__all__ = ("__version__", "air_temperature", "earthquakes", "penguins")
+__all__ = (
+    "__version__",
+    "air_temperature",
+    "apple_stocks",
+    "earthquakes",
+    "penguins",
+    "stocks",
+)

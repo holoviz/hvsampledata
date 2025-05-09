@@ -5,7 +5,7 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.penguins, hvs.earthquakes]
+datasets = [hvs.penguins, hvs.earthquakes, hvs.apple_stocks, hvs.stocks]
 
 
 @pytest.mark.parametrize("dataset", datasets)
@@ -269,3 +269,151 @@ def test_earthquakes_category_ordering(engine):
         expected_mag_type_str = str(pl.Enum(["Light", "Moderate", "Strong", "Major"]))
         assert str(schema["depth_class"]) == expected_depth_type_str
         assert str(schema["mag_class"]) == expected_mag_type_str
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_apple_stocks_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.apple_stocks(engine=engine)
+    if engine == "pandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "date": np.dtype("datetime64[ns]"),
+                "open": np.dtype("float64"),
+                "high": np.dtype("float64"),
+                "low": np.dtype("float64"),
+                "close": np.dtype("float64"),
+                "volume": np.dtype("int64"),
+                "adj_close": np.dtype("float64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.schema == {
+            "date": pl.Date,
+            "open": pl.Float64,
+            "high": pl.Float64,
+            "low": pl.Float64,
+            "close": pl.Float64,
+            "volume": pl.Int64,
+            "adj_close": pl.Float64,
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_apple_stocks_schema_lazy(engine):
+    pytest.importorskip(engine)
+    df = hvs.apple_stocks(engine=engine, lazy=True)
+    if engine == "dask":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "date": np.dtype("datetime64[ns]"),
+                "open": np.dtype("float64"),
+                "high": np.dtype("float64"),
+                "low": np.dtype("float64"),
+                "close": np.dtype("float64"),
+                "volume": np.dtype("int64"),
+                "adj_close": np.dtype("float64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.collect_schema() == {
+            "date": pl.Date,
+            "open": pl.Float64,
+            "high": pl.Float64,
+            "low": pl.Float64,
+            "close": pl.Float64,
+            "volume": pl.Int64,
+            "adj_close": pl.Float64,
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_stocks_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.stocks(engine=engine)
+    if engine == "pandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "date": np.dtype("datetime64[ns]"),
+                "Apple": np.dtype("float64"),
+                "Amazon": np.dtype("float64"),
+                "Google": np.dtype("float64"),
+                "Meta": np.dtype("float64"),
+                "Microsoft": np.dtype("float64"),
+                "Netflix": np.dtype("float64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.schema == {
+            "date": pl.Date,
+            "Apple": pl.Float64,
+            "Amazon": pl.Float64,
+            "Google": pl.Float64,
+            "Meta": pl.Float64,
+            "Microsoft": pl.Float64,
+            "Netflix": pl.Float64,
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_stocks_schema_lazy(engine):
+    pytest.importorskip(engine)
+    df = hvs.stocks(engine=engine, lazy=True)
+    if engine == "dask":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "date": np.dtype("datetime64[ns]"),
+                "Apple": np.dtype("float64"),
+                "Amazon": np.dtype("float64"),
+                "Google": np.dtype("float64"),
+                "Meta": np.dtype("float64"),
+                "Microsoft": np.dtype("float64"),
+                "Netflix": np.dtype("float64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.collect_schema() == {
+            "date": pl.Date,
+            "Apple": pl.Float64,
+            "Amazon": pl.Float64,
+            "Google": pl.Float64,
+            "Meta": pl.Float64,
+            "Microsoft": pl.Float64,
+            "Netflix": pl.Float64,
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
