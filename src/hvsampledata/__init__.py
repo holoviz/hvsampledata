@@ -2,13 +2,14 @@
 
 Currently available datasets:
 
-| Name             | Type    | Included |
-| ---------------- | ------- | -------- |
-| air_temperature  | Gridded | Yes      |
-| apple_stocks     | Tabular | Yes      |
-| earthquakes      | Tabular | Yes      |
-| penguins         | Tabular | Yes      |
-| stocks           | Tabular | Yes      |
+| Name               | Type    | Included |
+| ------------------ | ------- | -------- |
+| air_temperature    | Gridded | Yes      |
+| apple_stocks       | Tabular | Yes      |
+| earthquakes        | Tabular | Yes      |
+| penguins           | Tabular | Yes      |
+| stocks             | Tabular | Yes      |
+| synthetic_clusters | Tabular | Yes      |
 
 Use it with:
 
@@ -28,6 +29,138 @@ from ._util import _load_gridded, _load_tabular
 # -----------------------------------------------------------------------------
 # Tabular data
 # -----------------------------------------------------------------------------
+
+
+def synthetic_clusters(
+    engine: str,
+    *,
+    lazy: bool = False,
+    total_points: int = 1_000_000,
+):
+    """Large tabular dataset with 5 synthetic clusters generated from a normal
+    distribution.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (polars need lazy=True).
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container, by default False.
+    total_points: int, default=1_000_000
+        Total number of points in the dataset returned, must be a multiple of 5.
+
+    Description
+    -----------
+    Synthetic dataset that contains 5 clusters, each cluster generated from a
+    normal distribution centered on the first two values of these tuples (e.g.
+    `x,y=2,2` for the first cluster) and with a standard deviation equal to
+    the third value (e.g. `s=0.03` for the first cluster):
+
+    ```python
+    clusters = [
+        (2, 2, 0.03, 0, "d1"),
+        (2, -2, 0.10, 1, "d2"),
+        (-2, -2, 0.50, 2, "d3"),
+        (-2, 2, 1.00, 3, "d4"),
+        (0, 0, 3.00, 4, "d5"),
+    ]
+    ```
+
+    Schema
+    ------
+    | name | type        | description                                              |
+    |:-----|:------------|:---------------------------------------------------------|
+    | x    | number      | x coordinate                                             |
+    | y    | number      | y coordinate                                             |
+    | s    | number      | standard deviation of the distribution                   |
+    | val  | integer     | integer value per distribution, one of 0, 1, 2, 3, 4     |
+    | cat  | categorical | string value per distribution, one of d1, d2, d3, d4, d5 |
+    """
+
+    clusters = [
+        (2, 2, 0.03, 0, "d1"),
+        (2, -2, 0.10, 1, "d2"),
+        (-2, -2, 0.50, 2, "d3"),
+        (-2, 2, 1.00, 3, "d4"),
+        (0, 0, 3.00, 4, "d5"),
+    ]
+
+    if total_points % 5:
+        msg = "total_points must be a multiple of 5"
+        raise ValueError(msg)
+    points_per_cluster = total_points // 5
+    cats = ["d1", "d2", "d3", "d4", "d5"]
+    if engine in ["pandas", "dask"]:
+        import numpy as np
+        import pandas as pd
+
+        cat_dtype = pd.CategoricalDtype(categories=cats, ordered=False)
+
+        def create_synthetic_dataset(x, y, s, val, cat, cat_dtype, num, dask=False):
+            seed = np.random.default_rng(1)
+            df = pd.DataFrame(
+                {
+                    "x": seed.normal(x, s, num),
+                    "y": seed.normal(y, s, num),
+                    "s": s,
+                    "val": val,
+                    "cat": pd.Series([cat] * num, dtype=cat_dtype),
+                }
+            )
+            if dask:
+                import dask.dataframe as dd
+
+                return dd.from_pandas(df, npartitions=2)
+            return df
+
+        if engine == "pandas":
+            func_concat = pd.concat
+            kwargs_concat = {"ignore_index": True}
+        elif engine == "dask":
+            import dask.dataframe as dd
+
+            func_concat = dd.concat
+            kwargs_concat = {"axis": 0}  # , "interleave_partitions":  True}
+        df = func_concat(
+            [
+                create_synthetic_dataset(
+                    x, y, s, val, cat, cat_dtype, points_per_cluster, dask=engine == "dask"
+                )
+                for x, y, s, val, cat in clusters
+            ],
+            **kwargs_concat,
+        )
+        return df
+    elif engine == "polars":
+        import random
+
+        import polars as pl
+
+        def create_synthetic_dataset(x, y, s, val, cat, num, lazy=False):
+            pdf = pl.DataFrame(
+                {
+                    "x": [random.gauss(x, s) for _ in range(num)],
+                    "y": [random.gauss(y, s) for _ in range(num)],
+                    "s": [s] * num,
+                    "val": [val] * num,
+                    "cat": pl.Series([cat] * num).cast(pl.Enum(cats)),
+                }
+            )
+            if lazy:
+                return pdf.lazy()
+            return pdf
+
+        # Use a global StringCache so categoricals are shared
+        with pl.StringCache():
+            dfp = pl.concat(
+                [
+                    create_synthetic_dataset(x, y, s, val, cat, points_per_cluster, lazy=lazy)
+                    for x, y, s, val, cat in clusters
+                ],
+                how="vertical",
+            )
+        return dfp
 
 
 def penguins(
@@ -422,6 +555,7 @@ __all__ = (
     "air_temperature",
     "apple_stocks",
     "earthquakes",
+    "large_synthetic_cluster",
     "penguins",
     "stocks",
 )

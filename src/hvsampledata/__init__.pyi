@@ -132,3 +132,31 @@ def air_temperature(
     engine_kwargs: dict[str, Any] | None = None,
     # lazy: Literal[False] = False,
 ) -> xr.Dataset: ...
+@overload
+def synthetic_clusters(
+    engine: Literal["pandas"],
+    *,
+    lazy: Literal[False] = False,
+    total_points: int = 1_000_000,
+) -> pd.DataFrame: ...
+@overload
+def synthetic_clusters(
+    engine: Literal["polars"],
+    *,
+    lazy: Literal[False] = False,
+    total_points: int = 1_000_000,
+) -> pl.DataFrame: ...
+@overload
+def synthetic_clusters(
+    engine: Literal["polars"],
+    *,
+    lazy: Literal[True] = True,
+    total_points: int = 1_000_000,
+) -> pl.LazyFrame: ...
+@overload
+def synthetic_clusters(
+    engine: Literal["dask"],
+    *,
+    lazy: bool = False,
+    total_points: int = 1_000_000,
+) -> dd.DataFrame: ...

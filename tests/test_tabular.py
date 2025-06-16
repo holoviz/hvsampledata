@@ -5,7 +5,7 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.penguins, hvs.earthquakes, hvs.apple_stocks, hvs.stocks]
+datasets = [hvs.apple_stocks, hvs.earthquakes, hvs.synthetic_clusters, hvs.penguins, hvs.stocks]
 
 
 @pytest.mark.parametrize("dataset", datasets)
@@ -417,3 +417,91 @@ def test_stocks_schema_lazy(engine):
     else:
         msg = "Not valid engine"
         raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_synthetic_clusters_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.synthetic_clusters(engine=engine)
+    cats = ["d1", "d2", "d3", "d4", "d5"]
+    if engine == "pandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "x": np.dtype("float64"),
+                "y": np.dtype("float64"),
+                "s": np.dtype("float64"),
+                "val": np.dtype("int64"),
+                "cat": pd.CategoricalDtype(categories=cats, ordered=False),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.schema == {
+            "x": pl.Float64,
+            "y": pl.Float64,
+            "s": pl.Float64,
+            "val": pl.Int64,
+            "cat": pl.Enum(categories=cats),
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_synthetic_clusters_schema_lazy(engine):
+    pytest.importorskip(engine)
+    df = hvs.synthetic_clusters(engine=engine, lazy=True)
+    cats = ["d1", "d2", "d3", "d4", "d5"]
+    if engine == "dask":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "x": np.dtype("float64"),
+                "y": np.dtype("float64"),
+                "s": np.dtype("float64"),
+                "val": np.dtype("int64"),
+                "cat": pd.CategoricalDtype(categories=cats, ordered=False),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        assert df.collect_schema() == {
+            "x": pl.Float64,
+            "y": pl.Float64,
+            "s": pl.Float64,
+            "val": pl.Int64,
+            "cat": pl.Enum(categories=cats),
+        }
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_synthetic_clusters_total_points(engine):
+    pytest.importorskip(engine)
+    df = hvs.synthetic_clusters(engine=engine, total_points=10)
+    assert len(df) == 10
+    with pytest.raises(ValueError, match="total_points must be a multiple of 5"):
+        hvs.synthetic_clusters(engine=engine, total_points=11)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_synthetic_clusters_lazy_total_points(engine):
+    pytest.importorskip(engine)
+    df = hvs.synthetic_clusters(engine=engine, lazy=True, total_points=10)
+    if engine == "polars":
+        df = df.collect()
+    assert len(df) == 10
+    with pytest.raises(ValueError, match="total_points must be a multiple of 5"):
+        hvs.synthetic_clusters(engine=engine, lazy=True, total_points=11)
