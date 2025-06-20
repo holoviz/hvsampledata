@@ -9,13 +9,14 @@ Shared datasets for the HoloViz projects
 
 Datasets:
 
-| Name            | Type    | Included |
-| --------------- | ------- | -------- |
-| air_temperature | Gridded | Yes      |
-| apple_stocks    | Tabular | Yes      |
-| earthquakes     | Tabular | Yes      |
-| penguins        | Tabular | Yes      |
-| stocks          | Tabular | Yes      |
+| Name               | Type    | Included |
+| ------------------ | ------- | -------- |
+| air_temperature    | Gridded | Yes      |
+| apple_stocks       | Tabular | Yes      |
+| earthquakes        | Tabular | Yes      |
+| penguins           | Tabular | Yes      |
+| stocks             | Tabular | Yes      |
+| synthetic_clusters | Tabular | Yes      |
 
 ## Developer guide
 
