@@ -38,7 +38,7 @@ def synthetic_clusters(
     total_points: int = 1_000_000,
 ):
     """Large tabular dataset with 5 synthetic clusters generated from a normal
-    distribution.
+    distribution with a scale distributed roughly according to a power law.
 
     Parameters
     ----------
@@ -66,6 +66,9 @@ def synthetic_clusters(
         (0, 0, 3.00, 4, "d5"),
     ]
     ```
+
+    The standard deviation / scale is distributed roughly according to a power
+    law, with `s ~= 0.005 * x^4`.
 
     Schema
     ------
