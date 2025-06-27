@@ -558,7 +558,7 @@ __all__ = (
     "air_temperature",
     "apple_stocks",
     "earthquakes",
-    "large_synthetic_cluster",
     "penguins",
     "stocks",
+    "synthetic_clusters",
 )
