@@ -10,6 +10,7 @@ Currently available datasets:
 | penguins           | Tabular | Yes      |
 | stocks             | Tabular | Yes      |
 | synthetic_clusters | Tabular | Yes      |
+| world_countries    | Geo     | Yes      |
 
 Use it with:
 
@@ -479,6 +480,54 @@ def stocks(
     )
 
 
+def world_countries(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+):
+    """World Countries GeoDataset (simplified).
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. Only "geopandas" is supported.
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `geopandas.read_file`, by default None.
+
+    Description
+    -----------
+    Polygon geometries and selected metadata for world countries from the Natural Earth dataset.
+    Simplified for visualization purposes.
+
+    Schema
+    ------
+    | name      | type     | description                        |
+    |:----------|:---------|:-----------------------------------|
+    | NAME      | string   | Country name                       |
+    | CONTINENT | string   | Continent the country belongs to   |
+    | POP_EST   | integer  | Estimated population               |
+    | geometry  | geometry | Polygon geometry of the country    |
+
+    Source
+    ------
+    `ne_110m_admin_0_countries` dataset from Natural Earth, simplified and trimmed.
+
+    License
+    -------
+    Public domain data from Natural Earth (https://www.naturalearthdata.com).
+    """
+    if engine != "geopandas":
+        msg = "world_countries dataset only supports 'geopandas' engine"
+        raise ValueError(msg)
+
+    return _load_tabular(
+        "world_countries.parquet",
+        engine=engine,
+        format="parquet",
+        engine_kwargs=engine_kwargs,
+    )
+
+
 # -----------------------------------------------------------------------------
 # Gridded data
 # -----------------------------------------------------------------------------
@@ -561,4 +610,5 @@ __all__ = (
     "penguins",
     "stocks",
     "synthetic_clusters",
+    "world_countries",
 )
