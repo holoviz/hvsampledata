@@ -537,3 +537,33 @@ def test_synthetic_clusters_lazy_total_points(engine):
     assert len(df) == 10
     with pytest.raises(ValueError, match="total_points must be a multiple of 5"):
         hvs.synthetic_clusters(engine=engine, lazy=True, total_points=11)
+
+
+@pytest.mark.parametrize("engine", "geopandas")
+def test_world_countries_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.world_countries(engine=engine)
+
+    if engine == "geopandas":
+        import pandas as pd
+
+        # Only checking types here since geopandas uses its own geometry dtype
+        expected_dtypes = pd.Series(
+            {
+                "NAME": pd.StringDtype(),
+                "CONTINENT": pd.StringDtype(),
+                "POP_EST": pd.Int64Dtype(),
+                "geometry": "geometry",
+            }
+        )
+
+        actual_dtypes = df.dtypes.astype(str)
+        for col, expected in expected_dtypes.items():
+            assert col in df.columns
+            if expected == "geometry":
+                assert actual_dtypes[col].startswith("geometry")
+            else:
+                assert actual_dtypes[col] == str(expected)
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
