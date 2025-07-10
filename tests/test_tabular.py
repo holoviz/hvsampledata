@@ -551,7 +551,7 @@ def test_world_countries_schema(engine):
         expected_dtypes = pd.Series(
             {
                 "NAME": pd.StringDtype(),
-                "CONTINENT": pd.StringDtype(),
+                "CONTINENT": pd.CategoricalDtype(),
                 "POP_EST": pd.Int64Dtype(),
                 "geometry": "geometry",
             }

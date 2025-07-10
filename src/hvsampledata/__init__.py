@@ -492,7 +492,7 @@ def world_countries(
     engine : str
         Engine used to read the dataset. Only "geopandas" is supported.
     engine_kwargs : dict[str, Any], optional
-        Additional kwargs to pass to `geopandas.read_file`, by default None.
+        Additional kwargs to pass to `geopandas.read_parquet`, by default None.
 
     Description
     -----------
