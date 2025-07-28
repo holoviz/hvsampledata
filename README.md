@@ -14,6 +14,7 @@ Datasets:
 | air_temperature    | Gridded | Yes      |
 | apple_stocks       | Tabular | Yes      |
 | earthquakes        | Tabular | Yes      |
+| landsat_rgb        | Gridded | Yes      |
 | penguins           | Tabular | Yes      |
 | stocks             | Tabular | Yes      |
 | synthetic_clusters | Tabular | Yes      |

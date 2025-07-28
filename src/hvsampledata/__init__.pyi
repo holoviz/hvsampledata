@@ -160,3 +160,9 @@ def synthetic_clusters(
     lazy: bool = False,
     total_points: int = 1_000_000,
 ) -> dd.DataFrame: ...
+@overload
+def landsat_rgb(
+    engine: Literal["rioxarray"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+) -> xr.Dataset: ...

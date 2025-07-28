@@ -44,3 +44,21 @@ def test_air_temperature():
     }
     assert ds.dtypes == {"air": np.dtype("float64")}
     assert not ds.air.isnull().any().item()
+
+
+def test_landsat_rgb():
+    pytest.importorskip("rioxarray")
+    import numpy as np
+
+    ds = hvs.landsat_rgb("rioxarray")
+
+    assert ds.rgb.shape == (3, 215, 237)
+    assert str(ds.rio.crs) == "EPSG:32618"
+    assert ds.coords.dtypes == {
+        "band": np.dtype("int64"),
+        "x": np.dtype("float64"),
+        "y": np.dtype("float64"),
+        "spatial_ref": np.dtype("int64"),
+    }
+    assert ds.rgb.dtype == np.dtype("uint8")
+    assert not ds.rgb.isnull().any().item()
