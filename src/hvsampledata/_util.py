@@ -15,6 +15,7 @@ _CACHEPATH = user_cache_path() / "hvsampledata"
 _EAGER_TABULAR_LOOKUP = {
     "pandas": {"csv": "read_csv", "parquet": "read_parquet"},
     "polars": {"csv": "read_csv", "parquet": "read_parquet"},
+    "geopandas": {"geojson": "read_file", "parquet": "read_parquet"},
 }
 _LAZY_TABULAR_LOOKUP = {
     "polars": {"csv": "scan_csv", "parquet": "scan_parquet"},
