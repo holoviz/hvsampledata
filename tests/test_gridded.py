@@ -62,3 +62,19 @@ def test_landsat_rgb():
     }
     assert ds.rgb.dtype == np.dtype("uint8")
     assert not ds.rgb.isnull().any().item()
+
+
+def test_penguins_rgba():
+    pytest.importorskip("xarray")
+    import numpy as np
+
+    ds = hvs.penguins_rgba("xarray")
+
+    assert ds.rgba.shape == (100, 100, 4)
+    assert ds.coords.dtypes == {
+        "y": np.dtype("int64"),
+        "x": np.dtype("int64"),
+        "channel": np.dtype("<U1"),
+    }
+    assert ds.rgba.dtype == np.dtype("uint8")
+    assert not ds.rgba.isnull().any().item()

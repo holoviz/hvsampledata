@@ -9,6 +9,7 @@ Currently available datasets:
 | earthquakes        | Tabular | Yes      |
 | landsat_rgb        | Gridded | Yes      |
 | penguins           | Tabular | Yes      |
+| penguins_rgba      | Gridded | Yes      |
 | stocks             | Tabular | Yes      |
 | synthetic_clusters | Tabular | Yes      |
 
@@ -554,6 +555,65 @@ def air_temperature(
     return ds
 
 
+def penguins_rgba(
+    engine: str,
+):
+    """Penguins RGBA image.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset, only `xarray` is available.
+
+    Description
+    -----------
+    This dataset is an image of two adult Emperor penguins with a juvenile in
+    Antarctica, read from a 100x100 PNG file into an xarray Dataset object.
+
+    Dimensions:
+    - y: int64, 100 values
+    - x: int64, 100 values
+    - channel: U1, 4 values
+
+    Variables:
+    - rgba: [y|x|channel]: uint8
+
+    Source
+    ------
+    Original PNG file obtained from
+    https://en.wikipedia.org/wiki/Emperor_penguin#/media/File:Aptenodytes_forsteri_-Snow_Hill_Island,_Antarctica_-adults_and_juvenile-8.jpg
+    Original picture from Ian Duffy from UK - Animal Portraits.
+    The original file was reduced to 100x100.
+
+    License
+    -------
+    Creative Commons Attribution 2.0 Generic
+    https://creativecommons.org/licenses/by/2.0/deed.en
+    """
+
+    if engine != "xarray":
+        msg = "xarray is the only supported engine"
+        raise ValueError(msg)
+
+    import numpy as np
+    import xarray as xr
+    from PIL import Image
+
+    with Image.open(_DATAPATH / "penguins.png") as img:
+        img_array = np.array(img)
+
+    return xr.DataArray(
+        img_array,
+        dims=["y", "x", "channel"],
+        coords={
+            "y": np.arange(img_array.shape[0]),
+            "x": np.arange(img_array.shape[1]),
+            "channel": ["R", "G", "B", "A"],
+        },
+        name="rgba",
+    ).to_dataset()
+
+
 def landsat_rgb(
     engine: str,
     *,
@@ -621,6 +681,7 @@ __all__ = (
     "earthquakes",
     "landsat_rgb",
     "penguins",
+    "penguins_rgba",
     "stocks",
     "synthetic_clusters",
 )
