@@ -150,6 +150,7 @@ __all__: tuple[str, ...]
             generate_tabular_overloads("earthquakes"),
             generate_tabular_overloads("apple_stocks"),
             generate_tabular_overloads("stocks"),
+            generate_tabular_overloads("us_states"),
             generate_gridded_overloads("air_temperature"),
             custom(),
             "",
