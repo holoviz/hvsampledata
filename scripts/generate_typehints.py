@@ -109,6 +109,11 @@ def landsat_rgb(
     engine_kwargs: dict[str, Any] | None = None,
 ) -> xr.Dataset: ...
 """
+penguins_rgba = """@overload
+def penguins_rgba(
+    engine: Literal["xarray"],
+) -> xr.Dataset: ...
+"""
 
 
 def custom() -> str:

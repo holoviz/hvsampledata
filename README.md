@@ -16,6 +16,7 @@ Datasets:
 | earthquakes        | Tabular | Yes      |
 | landsat_rgb        | Gridded | Yes      |
 | penguins           | Tabular | Yes      |
+| penguins_rgba      | Gridded | Yes      |
 | stocks             | Tabular | Yes      |
 | synthetic_clusters | Tabular | Yes      |
 
