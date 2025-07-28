@@ -102,10 +102,22 @@ def synthetic_clusters(
     total_points: int = 1_000_000,
 ) -> dd.DataFrame: ...
 """
+landsat_rgb = """@overload
+def landsat_rgb(
+    engine: Literal["rioxarray"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+) -> xr.Dataset: ...
+"""
 
 
 def custom() -> str:
-    return synthetic_clusters.strip()
+    return "\n".join(  # noqa: FLY002
+        [
+            synthetic_clusters.strip(),
+            landsat_rgb.strip(),
+        ]
+    )
 
 
 def main():

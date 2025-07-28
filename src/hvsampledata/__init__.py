@@ -7,6 +7,7 @@ Currently available datasets:
 | air_temperature    | Gridded | Yes      |
 | apple_stocks       | Tabular | Yes      |
 | earthquakes        | Tabular | Yes      |
+| landsat_rgb        | Gridded | Yes      |
 | penguins           | Tabular | Yes      |
 | stocks             | Tabular | Yes      |
 | synthetic_clusters | Tabular | Yes      |
@@ -24,7 +25,7 @@ from __future__ import annotations
 from typing import Any
 
 from .__version import __version__
-from ._util import _load_gridded, _load_tabular
+from ._util import _DATAPATH, _load_gridded, _load_tabular
 
 # -----------------------------------------------------------------------------
 # Tabular data
@@ -553,11 +554,72 @@ def air_temperature(
     return ds
 
 
+def landsat_rgb(
+    engine: str,
+    *,
+    engine_kwargs=None,
+):
+    """Landsat 7 RGB tile.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset, only `rioxarray` is available.
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `rioxarray.open_rasterio`, by default None.
+
+    Description
+    -----------
+    This dataset is a satellite image from the USGS Landsat 7 mission, saved
+    as RGB GeoTIFF file. The area covers part of the Bahama, with pixel size of
+    ~1 km and a grid of 237x215. The nodata value is 0. Its CRS is WGS 84 / UTM
+    zone 18N (EPSG:32618).
+
+    Dimensions:
+    - band: int64, 3 values
+    - x: float64, 237 values
+    - y: float64, 215 values
+
+    Extra coords:
+    - spatial_ref: int64
+
+    Variables:
+    - rgb: [band|y|x]: uint8
+
+    Source
+    ------
+    Original GeoTIFF file obtained from the `rioxarray` Github repository
+    https://github.com/rasterio/rasterio/blob/95f1f5fb55be6763bf987f42eb54c644604c6d3d/tests/data/RGB.byte.tif
+
+    The original file was downsampled with this GDAL command to make it smaller:
+
+        gdal_translate -outsize 30% 30% RGB.byte.tif landsat_rgb.tif
+
+    Original data from the USGS Landsat satellite 7 mission.
+
+    License
+    -------
+    rasterio image RGB.byte.tif is licensed under the CC0 1.0 Universal (CC0 1.0)
+    Public Domain Dedication: http://creativecommons.org/publicdomain/zero/1.0/.
+    """
+    if engine != "rioxarray":
+        msg = "rioxarray is the only supported engine"
+        raise ValueError(msg)
+
+    import rioxarray
+
+    fp = _DATAPATH / "landsat_rgb.tif"
+    engine_kwargs = {} if engine_kwargs is None else engine_kwargs
+
+    return rioxarray.open_rasterio(fp, **engine_kwargs).to_dataset(name="rgb")
+
+
 __all__ = (
     "__version__",
     "air_temperature",
     "apple_stocks",
     "earthquakes",
+    "landsat_rgb",
     "penguins",
     "stocks",
     "synthetic_clusters",
