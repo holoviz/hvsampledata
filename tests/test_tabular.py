@@ -515,6 +515,7 @@ def test_synthetic_clusters_lazy_total_points(engine):
 
 @pytest.mark.parametrize("engine", ["geopandas"])
 def test_us_states_schema(engine):
+    pytest.importorskip(engine)
     df = hvs.us_states(engine=engine)
 
     if engine == "geopandas":
@@ -547,6 +548,7 @@ def test_us_states_schema(engine):
 
 @pytest.mark.parametrize("engine", ["geopandas"])
 def test_us_states_category_ordering(engine):
+    pytest.importorskip(engine)
     df = hvs.us_states(engine=engine)
     if engine == "geopandas":
         import pandas as pd
