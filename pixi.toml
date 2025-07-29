@@ -125,7 +125,6 @@ setup-dev = { depends-on = ["install", "lint-install"] }
 pytest = "*"
 pytest-cov = "*"
 pytest-github-actions-annotate-failures = "*"
-geopandas = "*"
 
 [feature.test-core.tasks]
 test-unit = 'pytest tests'

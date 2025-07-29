@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import Any, Literal, overload
 
 import dask.dataframe as dd
+import geopandas as gpd
 import pandas as pd
 import polars as pl
 import xarray as xr
@@ -194,3 +195,9 @@ def landsat_rgb(
     *,
     engine_kwargs: dict[str, Any] | None = None,
 ) -> xr.Dataset: ...
+@overload
+def us_states(
+    engine: Literal["geopandas"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+) -> gpd.GeoDataFrame: ...

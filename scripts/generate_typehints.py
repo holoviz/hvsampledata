@@ -114,6 +114,13 @@ def penguins_rgba(
     engine: Literal["xarray"],
 ) -> xr.Dataset: ...
 """
+us_states = """@overload
+def us_states(
+    engine: Literal["geopandas"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+) -> gpd.GeoDataFrame: ...
+"""
 
 
 def custom() -> str:
@@ -121,6 +128,7 @@ def custom() -> str:
         [
             synthetic_clusters.strip(),
             landsat_rgb.strip(),
+            us_states.strip(),
         ]
     )
 
@@ -135,6 +143,7 @@ from __future__ import annotations
 from typing import Any, Literal, overload
 
 import dask.dataframe as dd
+import geopandas as gpd
 import pandas as pd
 import polars as pl
 import xarray as xr
