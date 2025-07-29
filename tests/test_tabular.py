@@ -5,13 +5,24 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.apple_stocks, hvs.earthquakes, hvs.synthetic_clusters, hvs.penguins, hvs.stocks]
+datasets = [
+    hvs.apple_stocks,
+    hvs.earthquakes,
+    hvs.synthetic_clusters,
+    hvs.penguins,
+    hvs.stocks,
+    hvs.us_states,
+]
 
 
 @pytest.mark.parametrize("dataset", datasets)
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_eager_load(dataset, engine):
     pytest.importorskip(engine)
+    if dataset.__name__ == "us_states" and engine != "geopandas":
+        pytest.skip("us_states only supports geopandas")
+    if engine == "geopandas" and dataset.__name__ not in ("us_states",):
+        pytest.skip(f"{dataset.__name__} does not support geopandas")
     df = dataset(engine=engine)
     if engine == "pandas":
         import pandas as pd
@@ -21,6 +32,10 @@ def test_eager_load(dataset, engine):
         import polars as pl
 
         assert isinstance(df, pl.DataFrame)
+    elif engine == "geopandas":
+        import geopandas as gpd
+
+        assert isinstance(df, gpd.GeoDataFrame)
     else:
         msg = "Not valid engine"
         raise ValueError(msg)
@@ -30,6 +45,8 @@ def test_eager_load(dataset, engine):
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
 def test_lazy_load(dataset, engine):
     pytest.importorskip(engine)
+    if dataset.__name__ == "us_states":
+        pytest.skip("us_states does not support lazy loading")
     df = dataset(engine=engine, lazy=True)
     if engine == "polars":
         import polars as pl
@@ -47,6 +64,8 @@ def test_lazy_load(dataset, engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_penguins_schema(engine):
     pytest.importorskip(engine)
+    if engine == "geopandas":
+        pytest.skip("geopandas not supported for this dataset")
     df = hvs.penguins(engine=engine)
     if engine == "pandas":
         import numpy as np
@@ -125,6 +144,8 @@ def test_penguins_schema_lazy(engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_eager_load_earthquakes(engine):
     pytest.importorskip(engine)
+    if engine == "geopandas":
+        pytest.skip("geopandas not supported for this dataset")
     df = hvs.earthquakes(engine=engine)
     if engine == "pandas":
         import pandas as pd
@@ -142,6 +163,8 @@ def test_eager_load_earthquakes(engine):
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
 def test_lazy_load_earthquake(engine):
     pytest.importorskip(engine)
+    if engine == "geopandas":
+        pytest.skip("geopandas not supported for this dataset")
     df = hvs.earthquakes(engine=engine, lazy=True)
     if engine == "polars":
         import polars as pl
@@ -159,6 +182,8 @@ def test_lazy_load_earthquake(engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_earthquakes_schema(engine):
     pytest.importorskip(engine)
+    if engine == "geopandas":
+        pytest.skip("geopandas not supported for this dataset")
     df = hvs.earthquakes(engine=engine)
     if engine == "pandas":
         import numpy as np
@@ -274,6 +299,8 @@ def test_earthquakes_category_ordering(engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_apple_stocks_schema(engine):
     pytest.importorskip(engine)
+    if engine == "geopandas":
+        pytest.skip("geopandas not supported for this dataset")
     df = hvs.apple_stocks(engine=engine)
     if engine == "pandas":
         import numpy as np
@@ -348,6 +375,8 @@ def test_apple_stocks_schema_lazy(engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_stocks_schema(engine):
     pytest.importorskip(engine)
+    if engine == "geopandas":
+        pytest.skip("geopandas not supported for this dataset")
     df = hvs.stocks(engine=engine)
     if engine == "pandas":
         import numpy as np
@@ -422,6 +451,8 @@ def test_stocks_schema_lazy(engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_synthetic_clusters_schema(engine):
     pytest.importorskip(engine)
+    if engine == "geopandas":
+        pytest.skip("geopandas not supported for this dataset")
     df = hvs.synthetic_clusters(engine=engine)
     cats = ["d1", "d2", "d3", "d4", "d5"]
     if engine == "pandas":
@@ -490,6 +521,8 @@ def test_synthetic_clusters_schema_lazy(engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_synthetic_clusters_total_points(engine):
     pytest.importorskip(engine)
+    if engine == "geopandas":
+        pytest.skip("geopandas not supported for this dataset")
     df = hvs.synthetic_clusters(engine=engine, total_points=10)
     assert len(df) == 10
     with pytest.raises(ValueError, match="total_points must be a multiple of 5"):
@@ -505,3 +538,67 @@ def test_synthetic_clusters_lazy_total_points(engine):
     assert len(df) == 10
     with pytest.raises(ValueError, match="total_points must be a multiple of 5"):
         hvs.synthetic_clusters(engine=engine, lazy=True, total_points=11)
+
+
+@pytest.mark.parametrize("engine", ["geopandas"])
+def test_us_states_schema(engine):
+    df = hvs.us_states(engine=engine)
+
+    if engine == "geopandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "state": pd.CategoricalDtype(),
+                "median_income": np.dtype("float64"),
+                "income_range": pd.CategoricalDtype(),
+                "pop_density": np.dtype("float64"),
+                "pop_density_range": pd.CategoricalDtype(),
+                "bea_region": pd.CategoricalDtype(),
+                "geometry": "geometry",
+            }
+        )
+
+        actual_dtypes = df.dtypes.astype(str)
+        for col, expected in expected_dtypes.items():
+            assert col in df.columns
+            if expected == "geometry":
+                assert actual_dtypes[col].startswith("geometry")
+            else:
+                assert actual_dtypes[col] == str(expected)
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", ["geopandas"])
+def test_us_states_category_ordering(engine):
+    df = hvs.us_states(engine=engine)
+    if engine == "geopandas":
+        import pandas as pd
+
+        assert isinstance(df["income_range"].dtype, pd.CategoricalDtype)
+        cat_income_range = df["income_range"].cat
+        assert cat_income_range.ordered
+        assert list(cat_income_range.categories) == [
+            "<$40k",
+            "$40k-$50k",
+            "$50k-$60k",
+            "$60k-$70k",
+            ">$70k",
+        ]
+
+        assert isinstance(df["pop_density_range"].dtype, pd.CategoricalDtype)
+        cat_pop_density_range = df["pop_density_range"].cat
+        assert cat_pop_density_range.ordered
+        assert list(cat_pop_density_range.categories) == [
+            "Very Low",
+            "Low",
+            "Moderate",
+            "High",
+            "Very High",
+        ]
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)

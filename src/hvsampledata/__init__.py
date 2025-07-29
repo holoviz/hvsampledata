@@ -508,7 +508,7 @@ def us_states(
     ------
     | name              | type      | description                                     |
     |:------------------|:----------|:------------------------------------------------|
-    | state             | object    | U.S. state name                                 |
+    | state             | category  | U.S. state name                                 |
     | median_income     | float     | Median household income                         |
     | income_range      | category  | Binned income range                             |
     | pop_density       | float     | Population density per square mile              |
@@ -548,6 +548,7 @@ def us_states(
             gdf["pop_density_range"], categories=pop_density_cats, ordered=True
         )
         gdf["bea_region"] = gdf["bea_region"].astype("category")
+        gdf["state"] = gdf["state"].astype("category")
 
         return gdf
 
