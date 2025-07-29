@@ -517,7 +517,7 @@ def us_states(
     | state             | string    | U.S. state name                              |
     | median_income     | float     | Median household income                      |
     | income_range      | category  | Binned income range                          |
-    | pop_density       | float     | Population density per km2.                  |
+    | pop_density       | float     | Population density per square mile           |
     | pop_density_range | category  | Binned population density                    |
     | bea_region        | category  | U.S. economic region from the BEA            |
     | geometry          | geometry  | Polygon/MultiPolygon geometry for each state |
