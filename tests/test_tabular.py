@@ -5,7 +5,13 @@ import pytest
 import hvsampledata as hvs
 from hvsampledata._util import _EAGER_TABULAR_LOOKUP, _LAZY_TABULAR_LOOKUP
 
-datasets = [hvs.apple_stocks, hvs.earthquakes, hvs.synthetic_clusters, hvs.penguins, hvs.stocks]
+datasets = [
+    hvs.apple_stocks,
+    hvs.earthquakes,
+    hvs.synthetic_clusters,
+    hvs.penguins,
+    hvs.stocks,
+]
 
 
 @pytest.mark.parametrize("dataset", datasets)
@@ -505,3 +511,69 @@ def test_synthetic_clusters_lazy_total_points(engine):
     assert len(df) == 10
     with pytest.raises(ValueError, match="total_points must be a multiple of 5"):
         hvs.synthetic_clusters(engine=engine, lazy=True, total_points=11)
+
+
+@pytest.mark.parametrize("engine", ["geopandas"])
+def test_us_states_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.us_states(engine=engine)
+
+    if engine == "geopandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "state": np.dtype("O"),
+                "median_income": np.dtype("float64"),
+                "income_range": pd.CategoricalDtype(),
+                "pop_density": np.dtype("float64"),
+                "pop_density_range": pd.CategoricalDtype(),
+                "bea_region": pd.CategoricalDtype(),
+                "geometry": "geometry",
+            }
+        )
+
+        actual_dtypes = df.dtypes.astype(str)
+        for col, expected in expected_dtypes.items():
+            assert col in df.columns
+            if expected == "geometry":
+                assert actual_dtypes[col].startswith("geometry")
+            else:
+                assert actual_dtypes[col] == str(expected)
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", ["geopandas"])
+def test_us_states_category_ordering(engine):
+    pytest.importorskip(engine)
+    df = hvs.us_states(engine=engine)
+    if engine == "geopandas":
+        import pandas as pd
+
+        assert isinstance(df["income_range"].dtype, pd.CategoricalDtype)
+        cat_income_range = df["income_range"].cat
+        assert cat_income_range.ordered
+        assert list(cat_income_range.categories) == [
+            "<$40k",
+            "$40k-$50k",
+            "$50k-$60k",
+            "$60k-$70k",
+            ">$70k",
+        ]
+
+        assert isinstance(df["pop_density_range"].dtype, pd.CategoricalDtype)
+        cat_pop_density_range = df["pop_density_range"].cat
+        assert cat_pop_density_range.ordered
+        assert list(cat_pop_density_range.categories) == [
+            "Very Low",
+            "Low",
+            "Moderate",
+            "High",
+            "Very High",
+        ]
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)

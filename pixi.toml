@@ -75,6 +75,7 @@ pillow = "==10.2.0"
 rioxarray = "==0.15.0"
 xarray = "==2023.8.0"
 netcdf4 = "==1.7.2"
+geopandas = "==1.0"
 
 [feature.py39.dependencies]
 python = "3.9.*"
@@ -106,6 +107,7 @@ pillow = ">=10.2.0"
 rioxarray = ">=0.15.0"
 xarray = ">=2023.8.0"
 netcdf4 = ">=1.7.2"
+geopandas = ">=1.0"
 
 [feature.dev.dependencies]
 jupyterlab = "*"

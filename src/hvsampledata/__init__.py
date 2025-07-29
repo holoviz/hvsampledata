@@ -12,6 +12,7 @@ Currently available datasets:
 | penguins_rgba      | Gridded | Yes      |
 | stocks             | Tabular | Yes      |
 | synthetic_clusters | Tabular | Yes      |
+| us_states          | Tabular | Yes      |
 
 Use it with:
 
@@ -481,6 +482,75 @@ def stocks(
     )
 
 
+def us_states(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+):
+    """U.S. States socio-economic and geographic dataset.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. Only `"geopandas"` is supported.
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `geopandas.read_file`, by default None.
+
+    Description
+    -----------
+    Geodataframe with demographic and economic data for U.S. states, including:
+    - median income
+    - population density
+    - BEA-defined economic region
+    - classified income and population density ranges
+
+    The dataset contains 49 rows for the 50 US States, minus Hawaii that
+    was not included as it makes geographic plotting less user-friendly.
+
+    The polygons and multipolygons are in the WGS84 coordinate reference
+    system (EPSG:4326).
+
+    Schema
+    ------
+    | name              | type      | description                                  |
+    |:------------------|:----------|:---------------------------------------------|
+    | state             | string    | U.S. state name                              |
+    | median_income     | float     | Median household income                      |
+    | income_range      | category  | Binned income range                          |
+    | pop_density       | float     | Population density per square mile           |
+    | pop_density_range | category  | Binned population density                    |
+    | bea_region        | category  | U.S. economic region from the BEA            |
+    | geometry          | geometry  | Polygon/MultiPolygon geometry for each state |
+
+    Source
+    ------
+    Custom dataset derived from U.S. Census and BEA data.
+
+    License
+    -------
+    Public domain / derived from U.S. government data.
+    """
+    if engine != "geopandas":
+        msg = "us_states dataset only supports 'geopandas' engine"
+        raise ValueError(msg)
+
+    import geopandas as gpd
+    import pandas as pd
+
+    fp = _DATAPATH / "us_states.geojson"
+    engine_kwargs = {} if engine_kwargs is None else engine_kwargs
+    gdf = gpd.read_file(fp, **engine_kwargs)
+
+    income_cats = ["<$40k", "$40k-$50k", "$50k-$60k", "$60k-$70k", ">$70k"]
+    pop_density_cats = ["Very Low", "Low", "Moderate", "High", "Very High"]
+    gdf["income_range"] = pd.Categorical(gdf["income_range"], categories=income_cats, ordered=True)
+    gdf["pop_density_range"] = pd.Categorical(
+        gdf["pop_density_range"], categories=pop_density_cats, ordered=True
+    )
+    gdf["bea_region"] = gdf["bea_region"].astype("category")
+    return gdf
+
+
 # -----------------------------------------------------------------------------
 # Gridded data
 # -----------------------------------------------------------------------------
@@ -684,4 +754,5 @@ __all__ = (
     "penguins_rgba",
     "stocks",
     "synthetic_clusters",
+    "us_states",
 )
