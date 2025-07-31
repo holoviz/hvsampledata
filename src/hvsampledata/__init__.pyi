@@ -5,11 +5,11 @@ from __future__ import annotations
 
 from typing import Any, Literal, overload
 
-import dask.dataframe as dd
-import geopandas as gpd
-import pandas as pd
-import polars as pl
-import xarray as xr
+import dask.dataframe as _dd
+import geopandas as _gpd
+import pandas as _pd
+import polars as _pl
+import xarray as _xr
 
 __version__: str
 __all__: tuple[str, ...]
@@ -20,156 +20,156 @@ def penguins(
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
-) -> pd.DataFrame: ...
+) -> _pd.DataFrame: ...
 @overload
 def penguins(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
-) -> pl.DataFrame: ...
+) -> _pl.DataFrame: ...
 @overload
 def penguins(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
-) -> pl.LazyFrame: ...
+) -> _pl.LazyFrame: ...
 @overload
 def penguins(
     engine: Literal["dask"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
-) -> dd.DataFrame: ...
+) -> _dd.DataFrame: ...
 @overload
 def earthquakes(
     engine: Literal["pandas"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
-) -> pd.DataFrame: ...
+) -> _pd.DataFrame: ...
 @overload
 def earthquakes(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
-) -> pl.DataFrame: ...
+) -> _pl.DataFrame: ...
 @overload
 def earthquakes(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
-) -> pl.LazyFrame: ...
+) -> _pl.LazyFrame: ...
 @overload
 def earthquakes(
     engine: Literal["dask"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
-) -> dd.DataFrame: ...
+) -> _dd.DataFrame: ...
 @overload
 def apple_stocks(
     engine: Literal["pandas"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
-) -> pd.DataFrame: ...
+) -> _pd.DataFrame: ...
 @overload
 def apple_stocks(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
-) -> pl.DataFrame: ...
+) -> _pl.DataFrame: ...
 @overload
 def apple_stocks(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
-) -> pl.LazyFrame: ...
+) -> _pl.LazyFrame: ...
 @overload
 def apple_stocks(
     engine: Literal["dask"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
-) -> dd.DataFrame: ...
+) -> _dd.DataFrame: ...
 @overload
 def stocks(
     engine: Literal["pandas"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
-) -> pd.DataFrame: ...
+) -> _pd.DataFrame: ...
 @overload
 def stocks(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
-) -> pl.DataFrame: ...
+) -> _pl.DataFrame: ...
 @overload
 def stocks(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
-) -> pl.LazyFrame: ...
+) -> _pl.LazyFrame: ...
 @overload
 def stocks(
     engine: Literal["dask"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
-) -> dd.DataFrame: ...
+) -> _dd.DataFrame: ...
 @overload
 def air_temperature(
     engine: Literal["xarray"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     # lazy: Literal[False] = False,
-) -> xr.Dataset: ...
+) -> _xr.Dataset: ...
 @overload
 def synthetic_clusters(
     engine: Literal["pandas"],
     *,
     lazy: Literal[False] = False,
     total_points: int = 1_000_000,
-) -> pd.DataFrame: ...
+) -> _pd.DataFrame: ...
 @overload
 def synthetic_clusters(
     engine: Literal["polars"],
     *,
     lazy: Literal[False] = False,
     total_points: int = 1_000_000,
-) -> pl.DataFrame: ...
+) -> _pl.DataFrame: ...
 @overload
 def synthetic_clusters(
     engine: Literal["polars"],
     *,
     lazy: Literal[True] = True,
     total_points: int = 1_000_000,
-) -> pl.LazyFrame: ...
+) -> _pl.LazyFrame: ...
 @overload
 def synthetic_clusters(
     engine: Literal["dask"],
     *,
     lazy: bool = False,
     total_points: int = 1_000_000,
-) -> dd.DataFrame: ...
+) -> _dd.DataFrame: ...
 @overload
 def landsat_rgb(
     engine: Literal["rioxarray"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
-) -> xr.Dataset: ...
+) -> _xr.Dataset: ...
 @overload
 def us_states(
     engine: Literal["geopandas"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
-) -> gpd.GeoDataFrame: ...
+) -> _gpd.GeoDataFrame: ...
