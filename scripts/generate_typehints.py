@@ -10,11 +10,11 @@ def generate_tabular_overloads(func_name: str) -> str:
     for engine in ENGINES:
         for lazy in LAZY_OPTIONS:
             if engine == "pandas" and not lazy:
-                return_type = "pd.DataFrame"
+                return_type = "_pd.DataFrame"
             elif engine == "polars":
-                return_type = "pl.LazyFrame" if lazy else "pl.DataFrame"
+                return_type = "_pl.LazyFrame" if lazy else "_pl.DataFrame"
             elif engine == "dask" and lazy:
-                return_type = "dd.DataFrame"
+                return_type = "_dd.DataFrame"
             else:
                 continue
 
@@ -47,9 +47,9 @@ def generate_gridded_overloads(func_name: str) -> str:
     for engine in ENGINES:
         for lazy in LAZY_OPTIONS:
             if engine is None:
-                return_type = "" if lazy else "xr.Dataset"
+                return_type = "" if lazy else "_xr.Dataset"
             elif engine == "xarray":
-                return_type = "xr.Dataset"
+                return_type = "_xr.Dataset"
             else:
                 continue
 
@@ -79,47 +79,47 @@ def synthetic_clusters(
     *,
     lazy: Literal[False] = False,
     total_points: int = 1_000_000,
-) -> pd.DataFrame: ...
+) -> _pd.DataFrame: ...
 @overload
 def synthetic_clusters(
     engine: Literal["polars"],
     *,
     lazy: Literal[False] = False,
     total_points: int = 1_000_000,
-) -> pl.DataFrame: ...
+) -> _pl.DataFrame: ...
 @overload
 def synthetic_clusters(
     engine: Literal["polars"],
     *,
     lazy: Literal[True] = True,
     total_points: int = 1_000_000,
-) -> pl.LazyFrame: ...
+) -> _pl.LazyFrame: ...
 @overload
 def synthetic_clusters(
     engine: Literal["dask"],
     *,
     lazy: bool = False,
     total_points: int = 1_000_000,
-) -> dd.DataFrame: ...
+) -> _dd.DataFrame: ...
 """
 landsat_rgb = """@overload
 def landsat_rgb(
     engine: Literal["rioxarray"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
-) -> xr.Dataset: ...
+) -> _xr.Dataset: ...
 """
 penguins_rgba = """@overload
 def penguins_rgba(
     engine: Literal["xarray"],
-) -> xr.Dataset: ...
+) -> _xr.Dataset: ...
 """
 us_states = """@overload
 def us_states(
     engine: Literal["geopandas"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
-) -> gpd.GeoDataFrame: ...
+) -> _gpd.GeoDataFrame: ...
 """
 
 
@@ -142,11 +142,11 @@ from __future__ import annotations
 
 from typing import Any, Literal, overload
 
-import dask.dataframe as dd
-import geopandas as gpd
-import pandas as pd
-import polars as pl
-import xarray as xr
+import dask.dataframe as _dd
+import geopandas as _gpd
+import pandas as _pd
+import polars as _pl
+import xarray as _xr
 
 __version__: str
 __all__: tuple[str, ...]
