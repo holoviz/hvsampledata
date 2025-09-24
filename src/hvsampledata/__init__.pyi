@@ -127,6 +127,34 @@ def stocks(
     lazy: Literal[True] = True,
 ) -> _dd.DataFrame: ...
 @overload
+def nyc_taxi(
+    engine: Literal["pandas"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: Literal[False] = False,
+) -> _pd.DataFrame: ...
+@overload
+def nyc_taxi(
+    engine: Literal["polars"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: Literal[False] = False,
+) -> _pl.DataFrame: ...
+@overload
+def nyc_taxi(
+    engine: Literal["polars"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: Literal[True] = True,
+) -> _pl.LazyFrame: ...
+@overload
+def nyc_taxi(
+    engine: Literal["dask"],
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: Literal[True] = True,
+) -> _dd.DataFrame: ...
+@overload
 def air_temperature(
     engine: Literal["xarray"],
     *,
