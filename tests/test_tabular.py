@@ -577,3 +577,201 @@ def test_us_states_category_ordering(engine):
     else:
         msg = "Not valid engine"
         raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_nyc_taxi_schema(engine):
+    pytest.importorskip(engine)
+    df = hvs.nyc_taxi(engine=engine, lazy=False)
+    if engine == "pandas":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "VendorID": np.dtype("int64"),
+                "tpep_pickup_datetime": np.dtype("datetime64[ns]"),
+                "tpep_dropoff_datetime": np.dtype("datetime64[ns]"),
+                "passenger_count": np.dtype("int64"),
+                "trip_distance": np.dtype("float64"),
+                "pickup_x": np.dtype("float64"),
+                "pickup_y": np.dtype("float64"),
+                "RateCodeID": np.dtype("int64"),
+                "store_and_fwd_flag": np.dtype("O"),
+                "dropoff_x": np.dtype("float64"),
+                "dropoff_y": np.dtype("float64"),
+                "payment_type": np.dtype("int64"),
+                "fare_amount": np.dtype("float64"),
+                "extra": np.dtype("float64"),
+                "mta_tax": np.dtype("float64"),
+                "tip_amount": np.dtype("float64"),
+                "tolls_amount": np.dtype("float64"),
+                "improvement_surcharge": np.dtype("float64"),
+                "total_amount": np.dtype("float64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        expected_schema = {
+            "VendorID": pl.Int64,
+            "tpep_pickup_datetime": pl.Datetime(time_unit="us", time_zone=None),
+            "tpep_dropoff_datetime": pl.Datetime(time_unit="us", time_zone=None),
+            "passenger_count": pl.Int64,
+            "trip_distance": pl.Float64,
+            "pickup_x": pl.Float64,
+            "pickup_y": pl.Float64,
+            "RateCodeID": pl.Int64,
+            "store_and_fwd_flag": pl.String,
+            "dropoff_x": pl.Float64,
+            "dropoff_y": pl.Float64,
+            "payment_type": pl.Int64,
+            "fare_amount": pl.Float64,
+            "extra": pl.Float64,
+            "mta_tax": pl.Float64,
+            "tip_amount": pl.Float64,
+            "tolls_amount": pl.Float64,
+            "improvement_surcharge": pl.Float64,
+            "total_amount": pl.Float64,
+        }
+        assert df.schema == expected_schema
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_nyc_taxi_schema_lazy(engine):
+    pytest.importorskip(engine)
+    df = hvs.nyc_taxi(engine=engine, lazy=True)
+    if engine == "dask":
+        import numpy as np
+        import pandas as pd
+
+        expected_dtypes = pd.Series(
+            {
+                "VendorID": np.dtype("int64"),
+                "tpep_pickup_datetime": np.dtype("datetime64[ns]"),
+                "tpep_dropoff_datetime": np.dtype("datetime64[ns]"),
+                "passenger_count": np.dtype("int64"),
+                "trip_distance": np.dtype("float64"),
+                "pickup_x": np.dtype("float64"),
+                "pickup_y": np.dtype("float64"),
+                "RateCodeID": np.dtype("int64"),
+                "store_and_fwd_flag": pd.StringDtype("pyarrow"),
+                "dropoff_x": np.dtype("float64"),
+                "dropoff_y": np.dtype("float64"),
+                "payment_type": np.dtype("int64"),
+                "fare_amount": np.dtype("float64"),
+                "extra": np.dtype("float64"),
+                "mta_tax": np.dtype("float64"),
+                "tip_amount": np.dtype("float64"),
+                "tolls_amount": np.dtype("float64"),
+                "improvement_surcharge": np.dtype("float64"),
+                "total_amount": np.dtype("float64"),
+            }
+        )
+        pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
+    elif engine == "polars":
+        import polars as pl
+
+        expected_schema = {
+            "VendorID": pl.Int64,
+            "tpep_pickup_datetime": pl.Datetime(time_unit="us", time_zone=None),
+            "tpep_dropoff_datetime": pl.Datetime(time_unit="us", time_zone=None),
+            "passenger_count": pl.Int64,
+            "trip_distance": pl.Float64,
+            "pickup_x": pl.Float64,
+            "pickup_y": pl.Float64,
+            "RateCodeID": pl.Int64,
+            "store_and_fwd_flag": pl.String,
+            "dropoff_x": pl.Float64,
+            "dropoff_y": pl.Float64,
+            "payment_type": pl.Int64,
+            "fare_amount": pl.Float64,
+            "extra": pl.Float64,
+            "mta_tax": pl.Float64,
+            "tip_amount": pl.Float64,
+            "tolls_amount": pl.Float64,
+            "improvement_surcharge": pl.Float64,
+            "total_amount": pl.Float64,
+        }
+        assert df.lazy().collect().schema == expected_schema
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_nyc_taxi_row_count(engine):
+    pytest.importorskip(engine)
+    df = hvs.nyc_taxi(engine=engine, lazy=False)
+    # NYC taxi dataset has 3,774,008 rows
+    expected_rows = 3_774_008
+    if engine == "pandas":
+        assert len(df) == expected_rows
+    elif engine == "polars":
+        assert df.shape[0] == expected_rows
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_nyc_taxi_row_count_lazy(engine):
+    pytest.importorskip(engine)
+    df = hvs.nyc_taxi(engine=engine, lazy=True)
+    expected_rows = 3_774_008
+    if engine == "dask":
+        assert len(df) == expected_rows
+    elif engine == "polars":
+        assert df.collect().shape[0] == expected_rows
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
+def test_nyc_taxi_usecols(engine):
+    """Test that usecols parameter works correctly and doesn't parse datetime columns that aren't loaded."""
+    pytest.importorskip(engine)
+
+    # Use appropriate parameter name for each engine
+    if engine == "polars":
+        kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
+    else:
+        kwargs = {"usecols": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
+
+    df = hvs.nyc_taxi(engine=engine, lazy=False, engine_kwargs=kwargs)
+    expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
+    if engine in ("pandas", "polars"):
+        assert set(df.columns) == expected_columns
+        assert len(df.columns) == 4
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
+
+
+@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+def test_nyc_taxi_usecols_lazy(engine):
+    """Test that usecols parameter works correctly with lazy loading."""
+    pytest.importorskip(engine)
+
+    # Use appropriate parameter name for each engine
+    if engine == "polars":
+        kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
+    else:
+        kwargs = {"usecols": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
+
+    df = hvs.nyc_taxi(engine=engine, lazy=True, engine_kwargs=kwargs)
+    expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
+    if engine == "dask":
+        assert set(df.columns) == expected_columns
+        assert len(df.columns) == 4
+    elif engine == "polars":
+        assert set(df.collect().columns) == expected_columns
+        assert len(df.collect().columns) == 4
+    else:
+        msg = "Not valid engine"
+        raise ValueError(msg)
