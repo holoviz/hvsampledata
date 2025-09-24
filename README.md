@@ -15,6 +15,7 @@ Datasets:
 | apple_stocks       | Tabular | Yes      |
 | earthquakes        | Tabular | Yes      |
 | landsat_rgb        | Gridded | Yes      |
+| nyc_taxi           | Tabular | Remote   |
 | penguins           | Tabular | Yes      |
 | penguins_rgba      | Gridded | Yes      |
 | stocks             | Tabular | Yes      |
