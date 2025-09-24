@@ -8,6 +8,7 @@ Currently available datasets:
 | apple_stocks       | Tabular | Yes      |
 | earthquakes        | Tabular | Yes      |
 | landsat_rgb        | Gridded | Yes      |
+| nyc_taxi           | Tabular | Remote   |
 | penguins           | Tabular | Yes      |
 | penguins_rgba      | Gridded | Yes      |
 | stocks             | Tabular | Yes      |
@@ -19,6 +20,7 @@ Use it with:
 >>> import hvsampledata
 >>> ds = hvsampledata.air_temperature("xarray")
 >>> df = hvsampledata.penguins("pandas")
+>>> ddf = hvsampledata.nyc_taxi("dask")
 
 """
 
@@ -551,6 +553,115 @@ def us_states(
     return gdf
 
 
+def nyc_taxi(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: bool = True,
+):
+    """NYC Taxi trip record data 2015.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes (lazy=True).
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `read_csv`/`scan_csv`, by default None.
+        For column selection: use 'usecols' for pandas/dask, 'columns' for polars.
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container, by default True for this large dataset.
+
+    Description
+    -----------
+    Large dataset containing NYC taxi trip records with pickup and dropoff locations,
+    trip details, fare information, and payment data. This is a substantial dataset
+    (1.5GB+) and is recommended to be used with lazy=True for memory efficiency.
+
+    Schema
+    ------
+    | name                  | type    | description                           |
+    |:----------------------|:--------|:--------------------------------------|
+    | VendorID              | int64   | Taxi vendor identifier                |
+    | tpep_pickup_datetime  | object  | Trip pickup timestamp                 |
+    | tpep_dropoff_datetime | object  | Trip dropoff timestamp                |
+    | passenger_count       | int64   | Number of passengers                  |
+    | trip_distance         | float64 | Trip distance in miles                |
+    | pickup_x              | float64 | Pickup longitude coordinate           |
+    | pickup_y              | float64 | Pickup latitude coordinate            |
+    | RateCodeID            | int64   | Rate code for the trip                |
+    | store_and_fwd_flag    | object  | Store and forward flag                |
+    | dropoff_x             | float64 | Dropoff longitude coordinate          |
+    | dropoff_y             | float64 | Dropoff latitude coordinate           |
+    | payment_type          | int64   | Payment method identifier             |
+    | fare_amount           | float64 | Base fare in dollars                  |
+    | extra                 | float64 | Extra charges in dollars              |
+    | mta_tax               | float64 | MTA tax in dollars                    |
+    | tip_amount            | float64 | Tip amount in dollars                 |
+    | tolls_amount          | float64 | Tolls amount in dollars               |
+    | improvement_surcharge | float64 | Improvement surcharge in dollars      |
+    | total_amount          | float64 | Total trip cost in dollars            |
+
+    Source
+    ------
+    NYC Taxi and Limousine Commission (TLC) trip record data.
+    Available at: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+
+    License
+    -------
+    Public domain / NYC Open Data.
+    """
+    engine_kwargs = engine_kwargs or {}
+
+    # Validate engine-specific parameters
+    if engine == "polars" and "usecols" in engine_kwargs:
+        msg = (
+            "The 'usecols' parameter is not supported for polars engine. "
+            "Use 'columns' instead. Example: engine_kwargs={'columns': ['col1', 'col2']}"
+        )
+        raise ValueError(msg)
+
+    # Convert datetime columns, but only if they're being loaded
+    usecols = engine_kwargs.get("usecols") or engine_kwargs.get("columns")
+    datetime_cols = ["tpep_pickup_datetime", "tpep_dropoff_datetime"]
+
+    # Handle polars column selection
+    polars_columns = None
+    if engine == "polars":
+        if "columns" in engine_kwargs:
+            polars_columns = engine_kwargs.pop("columns")
+
+        # For eager loading, we can use columns parameter
+        if not lazy and polars_columns:
+            engine_kwargs["columns"] = polars_columns
+            polars_columns = None  # Don't apply .select() later
+
+        engine_kwargs = {
+            "try_parse_dates": True,
+        } | engine_kwargs
+    # Only parse datetime columns if they're included in usecols (or usecols is None)
+    elif usecols is None or any(col in usecols for col in datetime_cols):
+        parse_dates = [col for col in datetime_cols if usecols is None or col in usecols]
+        if parse_dates:
+            engine_kwargs = {
+                "parse_dates": parse_dates,
+            } | engine_kwargs
+
+    data = _load_tabular(
+        "http://s3.amazonaws.com/datashader-data/nyc_taxi.csv",
+        format="csv",
+        engine=engine,
+        engine_kwargs=engine_kwargs,
+        lazy=lazy,
+    )
+
+    # Apply column selection for polars lazy loading
+    if engine == "polars" and lazy and polars_columns:
+        data = data.select(polars_columns)
+
+    return data
+
+
 # -----------------------------------------------------------------------------
 # Gridded data
 # -----------------------------------------------------------------------------
@@ -750,6 +861,7 @@ __all__ = (
     "apple_stocks",
     "earthquakes",
     "landsat_rgb",
+    "nyc_taxi",
     "penguins",
     "penguins_rgba",
     "stocks",
