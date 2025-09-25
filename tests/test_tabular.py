@@ -734,11 +734,13 @@ def test_nyc_taxi_usecols_lazy(engine):
     df = hvs.nyc_taxi(engine=engine, engine_kwargs=kwargs)
     expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
     if engine == "dask":
-        assert set(df.columns) == expected_columns
-        assert len(df.columns) == 4
+        columns = df.columns
+        assert set(columns) == expected_columns
+        assert len(columns) == 4
     elif engine == "polars":
-        assert set(df.collect().columns) == expected_columns
-        assert len(df.collect().columns) == 4
+        columns = df.collect().columns
+        assert set(columns) == expected_columns
+        assert len(columns) == 4
     else:
         msg = "Not valid engine"
         raise ValueError(msg)

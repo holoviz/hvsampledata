@@ -651,14 +651,15 @@ def nyc_taxi(
     # Handle columns and datetime parsing for pandas/dask
     else:
         selected_columns = engine_kwargs.get("usecols")
-        if selected_columns is None or any(col in selected_columns for col in datetime_cols):
-            parse_dates = [
-                col for col in datetime_cols if selected_columns is None or col in selected_columns
-            ]
-            if parse_dates:
-                engine_kwargs = {
-                    "parse_dates": parse_dates,
-                } | engine_kwargs
+        if selected_columns is None:
+            parse_dates = datetime_cols
+        else:
+            parse_dates = [col for col in datetime_cols if col in selected_columns]
+
+        if parse_dates:
+            engine_kwargs = {
+                "parse_dates": parse_dates,
+            } | engine_kwargs
 
     data = _load_tabular(
         "http://s3.amazonaws.com/datashader-data/nyc_taxi.csv",
