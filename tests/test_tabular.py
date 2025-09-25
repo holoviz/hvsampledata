@@ -582,32 +582,32 @@ def test_us_states_category_ordering(engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_nyc_taxi_schema_eager(engine):
     pytest.importorskip(engine)
-    df = hvs.nyc_taxi(engine=engine, lazy=False)
+    df = hvs.nyc_taxi(engine=engine)
     if engine == "pandas":
         import numpy as np
         import pandas as pd
 
         expected_dtypes = pd.Series(
             {
-                "VendorID": np.dtype("int64"),
-                "tpep_pickup_datetime": np.dtype("datetime64[ns]"),
-                "tpep_dropoff_datetime": np.dtype("datetime64[ns]"),
-                "passenger_count": np.dtype("int64"),
-                "trip_distance": np.dtype("float64"),
-                "pickup_x": np.dtype("float64"),
-                "pickup_y": np.dtype("float64"),
-                "RateCodeID": np.dtype("int64"),
+                "VendorID": np.dtype("int8"),
+                "tpep_pickup_datetime": np.dtype("datetime64[us]"),
+                "tpep_dropoff_datetime": np.dtype("datetime64[us]"),
+                "passenger_count": np.dtype("int8"),
+                "trip_distance": np.dtype("float32"),
+                "pickup_x": np.dtype("float32"),
+                "pickup_y": np.dtype("float32"),
+                "RateCodeID": np.dtype("int8"),
                 "store_and_fwd_flag": np.dtype("O"),
-                "dropoff_x": np.dtype("float64"),
-                "dropoff_y": np.dtype("float64"),
-                "payment_type": np.dtype("int64"),
-                "fare_amount": np.dtype("float64"),
-                "extra": np.dtype("float64"),
-                "mta_tax": np.dtype("float64"),
-                "tip_amount": np.dtype("float64"),
-                "tolls_amount": np.dtype("float64"),
-                "improvement_surcharge": np.dtype("float64"),
-                "total_amount": np.dtype("float64"),
+                "dropoff_x": np.dtype("float32"),
+                "dropoff_y": np.dtype("float32"),
+                "payment_type": np.dtype("int8"),
+                "fare_amount": np.dtype("float32"),
+                "extra": np.dtype("float32"),
+                "mta_tax": np.dtype("float32"),
+                "tip_amount": np.dtype("float32"),
+                "tolls_amount": np.dtype("float32"),
+                "improvement_surcharge": np.dtype("float32"),
+                "total_amount": np.dtype("float32"),
             }
         )
         pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
@@ -615,25 +615,25 @@ def test_nyc_taxi_schema_eager(engine):
         import polars as pl
 
         expected_schema = {
-            "VendorID": pl.Int64,
+            "VendorID": pl.Int8,
             "tpep_pickup_datetime": pl.Datetime(time_unit="us", time_zone=None),
             "tpep_dropoff_datetime": pl.Datetime(time_unit="us", time_zone=None),
-            "passenger_count": pl.Int64,
-            "trip_distance": pl.Float64,
-            "pickup_x": pl.Float64,
-            "pickup_y": pl.Float64,
-            "RateCodeID": pl.Int64,
+            "passenger_count": pl.Int8,
+            "trip_distance": pl.Float32,
+            "pickup_x": pl.Float32,
+            "pickup_y": pl.Float32,
+            "RateCodeID": pl.Int8,
             "store_and_fwd_flag": pl.String,
-            "dropoff_x": pl.Float64,
-            "dropoff_y": pl.Float64,
-            "payment_type": pl.Int64,
-            "fare_amount": pl.Float64,
-            "extra": pl.Float64,
-            "mta_tax": pl.Float64,
-            "tip_amount": pl.Float64,
-            "tolls_amount": pl.Float64,
-            "improvement_surcharge": pl.Float64,
-            "total_amount": pl.Float64,
+            "dropoff_x": pl.Float32,
+            "dropoff_y": pl.Float32,
+            "payment_type": pl.Int8,
+            "fare_amount": pl.Float32,
+            "extra": pl.Float32,
+            "mta_tax": pl.Float32,
+            "tip_amount": pl.Float32,
+            "tolls_amount": pl.Float32,
+            "improvement_surcharge": pl.Float32,
+            "total_amount": pl.Float32,
         }
         assert df.schema == expected_schema
     else:
@@ -644,32 +644,32 @@ def test_nyc_taxi_schema_eager(engine):
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
 def test_nyc_taxi_schema_lazy(engine):
     pytest.importorskip(engine)
-    df = hvs.nyc_taxi(engine=engine)  # lazy=True by default
+    df = hvs.nyc_taxi(engine=engine, lazy=True)
     if engine == "dask":
         import numpy as np
         import pandas as pd
 
         expected_dtypes = pd.Series(
             {
-                "VendorID": np.dtype("int64"),
-                "tpep_pickup_datetime": np.dtype("datetime64[ns]"),
-                "tpep_dropoff_datetime": np.dtype("datetime64[ns]"),
-                "passenger_count": np.dtype("int64"),
-                "trip_distance": np.dtype("float64"),
-                "pickup_x": np.dtype("float64"),
-                "pickup_y": np.dtype("float64"),
-                "RateCodeID": np.dtype("int64"),
+                "VendorID": np.dtype("int8"),
+                "tpep_pickup_datetime": np.dtype("datetime64[us]"),
+                "tpep_dropoff_datetime": np.dtype("datetime64[us]"),
+                "passenger_count": np.dtype("int8"),
+                "trip_distance": np.dtype("float32"),
+                "pickup_x": np.dtype("float32"),
+                "pickup_y": np.dtype("float32"),
+                "RateCodeID": np.dtype("int8"),
                 "store_and_fwd_flag": pd.StringDtype("pyarrow"),
-                "dropoff_x": np.dtype("float64"),
-                "dropoff_y": np.dtype("float64"),
-                "payment_type": np.dtype("int64"),
-                "fare_amount": np.dtype("float64"),
-                "extra": np.dtype("float64"),
-                "mta_tax": np.dtype("float64"),
-                "tip_amount": np.dtype("float64"),
-                "tolls_amount": np.dtype("float64"),
-                "improvement_surcharge": np.dtype("float64"),
-                "total_amount": np.dtype("float64"),
+                "dropoff_x": np.dtype("float32"),
+                "dropoff_y": np.dtype("float32"),
+                "payment_type": np.dtype("int8"),
+                "fare_amount": np.dtype("float32"),
+                "extra": np.dtype("float32"),
+                "mta_tax": np.dtype("float32"),
+                "tip_amount": np.dtype("float32"),
+                "tolls_amount": np.dtype("float32"),
+                "improvement_surcharge": np.dtype("float32"),
+                "total_amount": np.dtype("float32"),
             }
         )
         pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
@@ -677,25 +677,25 @@ def test_nyc_taxi_schema_lazy(engine):
         import polars as pl
 
         expected_schema = {
-            "VendorID": pl.Int64,
+            "VendorID": pl.Int8,
             "tpep_pickup_datetime": pl.Datetime(time_unit="us", time_zone=None),
             "tpep_dropoff_datetime": pl.Datetime(time_unit="us", time_zone=None),
-            "passenger_count": pl.Int64,
-            "trip_distance": pl.Float64,
-            "pickup_x": pl.Float64,
-            "pickup_y": pl.Float64,
-            "RateCodeID": pl.Int64,
+            "passenger_count": pl.Int8,
+            "trip_distance": pl.Float32,
+            "pickup_x": pl.Float32,
+            "pickup_y": pl.Float32,
+            "RateCodeID": pl.Int8,
             "store_and_fwd_flag": pl.String,
-            "dropoff_x": pl.Float64,
-            "dropoff_y": pl.Float64,
-            "payment_type": pl.Int64,
-            "fare_amount": pl.Float64,
-            "extra": pl.Float64,
-            "mta_tax": pl.Float64,
-            "tip_amount": pl.Float64,
-            "tolls_amount": pl.Float64,
-            "improvement_surcharge": pl.Float64,
-            "total_amount": pl.Float64,
+            "dropoff_x": pl.Float32,
+            "dropoff_y": pl.Float32,
+            "payment_type": pl.Int8,
+            "fare_amount": pl.Float32,
+            "extra": pl.Float32,
+            "mta_tax": pl.Float32,
+            "tip_amount": pl.Float32,
+            "tolls_amount": pl.Float32,
+            "improvement_surcharge": pl.Float32,
+            "total_amount": pl.Float32,
         }
         assert df.lazy().collect().schema == expected_schema
     else:
@@ -707,12 +707,9 @@ def test_nyc_taxi_schema_lazy(engine):
 def test_nyc_taxi_usecols_eager(engine):
     pytest.importorskip(engine)
 
-    if engine == "polars":
-        kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
-    else:
-        kwargs = {"usecols": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
-
+    kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
     df = hvs.nyc_taxi(engine=engine, lazy=False, engine_kwargs=kwargs)
+
     expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
     if engine in ("pandas", "polars"):
         assert set(df.columns) == expected_columns
@@ -726,12 +723,9 @@ def test_nyc_taxi_usecols_eager(engine):
 def test_nyc_taxi_usecols_lazy(engine):
     pytest.importorskip(engine)
 
-    if engine == "polars":
-        kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
-    else:
-        kwargs = {"usecols": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
+    kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
+    df = hvs.nyc_taxi(engine=engine, engine_kwargs=kwargs, lazy=True)
 
-    df = hvs.nyc_taxi(engine=engine, engine_kwargs=kwargs)
     expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
     if engine == "dask":
         columns = df.columns

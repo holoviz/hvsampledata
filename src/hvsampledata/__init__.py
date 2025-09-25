@@ -557,7 +557,7 @@ def nyc_taxi(
     engine: str,
     *,
     engine_kwargs: dict[str, Any] | None = None,
-    lazy: bool = True,
+    lazy: bool = False,
 ):
     """NYC Taxi trip record data 2015.
 
@@ -565,13 +565,12 @@ def nyc_taxi(
     ----------
     engine : str
         Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
-        "polars" or "dask" for lazy dataframes (lazy=True).
+        "polars" or "dask" for lazy dataframes.
     engine_kwargs : dict[str, Any], optional
-        Additional kwargs to pass to `read_csv`/`scan_csv`, by default None.
-        For column selection: use 'usecols' for pandas/dask, 'columns' for polars.
-        Note: For polars lazy loading, column selection is applied via .select() after scan_csv().
+        Additional kwargs to pass to `read_parquet`/`scan_parquet`, by default None.
+        Note: For polars lazy loading, column selection is applied via .select() after scan_parquet().
     lazy : bool, optional
-        Whether to load the dataset in a lazy container, by default True for this large dataset.
+        Whether to load the dataset in a lazy container.
 
     Description
     -----------
@@ -583,25 +582,25 @@ def nyc_taxi(
     ------
     | name                  | type     | description                       |
     |:----------------------|:---------|:----------------------------------|
-    | VendorID              | int64    | Taxi vendor identifier            |
+    | VendorID              | int8     | Taxi vendor identifier            |
     | tpep_pickup_datetime  | datetime | Trip pickup timestamp             |
     | tpep_dropoff_datetime | datetime | Trip dropoff timestamp            |
-    | passenger_count       | int64    | Number of passengers              |
-    | trip_distance         | float64  | Trip distance in miles            |
-    | pickup_x              | float64  | Pickup longitude coordinate       |
-    | pickup_y              | float64  | Pickup latitude coordinate        |
-    | RateCodeID            | int64    | Rate code for the trip            |
+    | passenger_count       | int8     | Number of passengers              |
+    | trip_distance         | float32  | Trip distance in miles            |
+    | pickup_x              | float32  | Pickup longitude coordinate       |
+    | pickup_y              | float32  | Pickup latitude coordinate        |
+    | RateCodeID            | int8     | Rate code for the trip            |
     | store_and_fwd_flag    | object   | Store and forward flag            |
-    | dropoff_x             | float64  | Dropoff longitude coordinate      |
-    | dropoff_y             | float64  | Dropoff latitude coordinate       |
-    | payment_type          | int64    | Payment method identifier         |
-    | fare_amount           | float64  | Base fare in dollars              |
-    | extra                 | float64  | Extra charges in dollars          |
-    | mta_tax               | float64  | MTA tax in dollars                |
-    | tip_amount            | float64  | Tip amount in dollars             |
-    | tolls_amount          | float64  | Tolls amount in dollars           |
-    | improvement_surcharge | float64  | Improvement surcharge in dollars  |
-    | total_amount          | float64  | Total trip cost in dollars        |
+    | dropoff_x             | float32  | Dropoff longitude coordinate      |
+    | dropoff_y             | float32  | Dropoff latitude coordinate       |
+    | payment_type          | int8     | Payment method identifier         |
+    | fare_amount           | float32  | Base fare in dollars              |
+    | extra                 | float32  | Extra charges in dollars          |
+    | mta_tax               | float32  | MTA tax in dollars                |
+    | tip_amount            | float32  | Tip amount in dollars             |
+    | tolls_amount          | float32  | Tolls amount in dollars           |
+    | improvement_surcharge | float32  | Improvement surcharge in dollars  |
+    | total_amount          | float32  | Total trip cost in dollars        |
 
     Source
     ------
@@ -614,56 +613,27 @@ def nyc_taxi(
 
     Examples
     --------
-    Load full dataset (lazy by default):
+    Load full dataset:
 
-    >>> df = nyc_taxi("polars")  # LazyFrame
-    >>> df = nyc_taxi("dask")    # Dask DataFrame
+    >>> df = nyc_taxi("polars")  # Polars DataFrame
+    >>> df = nyc_taxi("dask", lazy=True)  # Dask DataFrame
 
     Load specific columns:
 
-    >>> # For pandas/dask - use usecols
-    >>> df = nyc_taxi("pandas", lazy=False,
-    ...               engine_kwargs={"usecols": ["pickup_x", "pickup_y"]})
-    >>> # For polars - use columns (works for both eager and lazy)
-    >>> df = nyc_taxi("polars", lazy=False,
-    ...               engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
+    >>> df = nyc_taxi("polars", engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
     >>> df = nyc_taxi("polars", lazy=True,
     ...               engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
     """
     engine_kwargs = engine_kwargs or {}
 
-    # Validate engine-specific parameters and handle column selection
-    datetime_cols = ["tpep_pickup_datetime", "tpep_dropoff_datetime"]
+    # Handle columns selection in polars
     polars_columns = None
-    # Handle columns and datetime parsing for polars
-    if engine == "polars":
-        if "usecols" in engine_kwargs:
-            msg = (
-                "The 'usecols' parameter is not supported for polars engine. "
-                "Use 'columns' instead. Example: engine_kwargs={'columns': ['col1', 'col2']}"
-            )
-            raise ValueError(msg)
-        if "columns" in engine_kwargs and lazy:
-            polars_columns = engine_kwargs.pop("columns")
-        engine_kwargs = {
-            "try_parse_dates": True,
-        } | engine_kwargs
-    # Handle columns and datetime parsing for pandas/dask
-    else:
-        selected_columns = engine_kwargs.get("usecols")
-        if selected_columns is None:
-            parse_dates = datetime_cols
-        else:
-            parse_dates = [col for col in datetime_cols if col in selected_columns]
-
-        if parse_dates:
-            engine_kwargs = {
-                "parse_dates": parse_dates,
-            } | engine_kwargs
+    if engine == "polars" and "columns" in engine_kwargs and lazy:
+        polars_columns = engine_kwargs.pop("columns")
 
     data = _load_tabular(
-        "http://s3.amazonaws.com/datashader-data/nyc_taxi.csv",
-        format="csv",
+        "/Users/mac/Documents/hvsampledata/nyc_taxi.parquet",  # new link
+        format="parquet",
         engine=engine,
         engine_kwargs=engine_kwargs,
         lazy=lazy,
