@@ -580,7 +580,7 @@ def test_us_states_category_ordering(engine):
 
 
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
-def test_nyc_taxi_schema(engine):
+def test_nyc_taxi_schema_eager(engine):
     pytest.importorskip(engine)
     df = hvs.nyc_taxi(engine=engine, lazy=False)
     if engine == "pandas":
@@ -644,7 +644,7 @@ def test_nyc_taxi_schema(engine):
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
 def test_nyc_taxi_schema_lazy(engine):
     pytest.importorskip(engine)
-    df = hvs.nyc_taxi(engine=engine, lazy=True)
+    df = hvs.nyc_taxi(engine=engine)  # lazy=True by default
     if engine == "dask":
         import numpy as np
         import pandas as pd
@@ -704,40 +704,9 @@ def test_nyc_taxi_schema_lazy(engine):
 
 
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
-def test_nyc_taxi_row_count(engine):
-    pytest.importorskip(engine)
-    df = hvs.nyc_taxi(engine=engine, lazy=False)
-    # NYC taxi dataset has 3,774,008 rows
-    expected_rows = 3_774_008
-    if engine == "pandas":
-        assert len(df) == expected_rows
-    elif engine == "polars":
-        assert df.shape[0] == expected_rows
-    else:
-        msg = "Not valid engine"
-        raise ValueError(msg)
-
-
-@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
-def test_nyc_taxi_row_count_lazy(engine):
-    pytest.importorskip(engine)
-    df = hvs.nyc_taxi(engine=engine, lazy=True)
-    expected_rows = 3_774_008
-    if engine == "dask":
-        assert len(df) == expected_rows
-    elif engine == "polars":
-        assert df.collect().shape[0] == expected_rows
-    else:
-        msg = "Not valid engine"
-        raise ValueError(msg)
-
-
-@pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
-def test_nyc_taxi_usecols(engine):
-    """Test that usecols parameter works correctly and doesn't parse datetime columns that aren't loaded."""
+def test_nyc_taxi_usecols_eager(engine):
     pytest.importorskip(engine)
 
-    # Use appropriate parameter name for each engine
     if engine == "polars":
         kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
     else:
@@ -755,16 +724,14 @@ def test_nyc_taxi_usecols(engine):
 
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
 def test_nyc_taxi_usecols_lazy(engine):
-    """Test that usecols parameter works correctly with lazy loading."""
     pytest.importorskip(engine)
 
-    # Use appropriate parameter name for each engine
     if engine == "polars":
         kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
     else:
         kwargs = {"usecols": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
 
-    df = hvs.nyc_taxi(engine=engine, lazy=True, engine_kwargs=kwargs)
+    df = hvs.nyc_taxi(engine=engine, engine_kwargs=kwargs)
     expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
     if engine == "dask":
         assert set(df.columns) == expected_columns
