@@ -575,32 +575,24 @@ def nyc_taxi(
     Description
     -----------
     Large dataset containing NYC taxi trip records with pickup and dropoff locations,
-    trip details, fare information, and payment data. This is a substantial dataset
-    (1.5GB+) and is recommended to be used with lazy=True for memory efficiency.
+    trip details and fare information.
 
     Schema
     ------
-    | name                  | type     | description                       |
-    |:----------------------|:---------|:----------------------------------|
-    | VendorID              | int8     | Taxi vendor identifier            |
-    | tpep_pickup_datetime  | datetime | Trip pickup timestamp             |
-    | tpep_dropoff_datetime | datetime | Trip dropoff timestamp            |
-    | passenger_count       | int8     | Number of passengers              |
-    | trip_distance         | float32  | Trip distance in miles            |
-    | pickup_x              | float32  | Pickup longitude coordinate       |
-    | pickup_y              | float32  | Pickup latitude coordinate        |
-    | RateCodeID            | int8     | Rate code for the trip            |
-    | store_and_fwd_flag    | object   | Store and forward flag            |
-    | dropoff_x             | float32  | Dropoff longitude coordinate      |
-    | dropoff_y             | float32  | Dropoff latitude coordinate       |
-    | payment_type          | int8     | Payment method identifier         |
-    | fare_amount           | float32  | Base fare in dollars              |
-    | extra                 | float32  | Extra charges in dollars          |
-    | mta_tax               | float32  | MTA tax in dollars                |
-    | tip_amount            | float32  | Tip amount in dollars             |
-    | tolls_amount          | float32  | Tolls amount in dollars           |
-    | improvement_surcharge | float32  | Improvement surcharge in dollars  |
-    | total_amount          | float32  | Total trip cost in dollars        |
+    | name                  | type     | description                   |
+    |:----------------------|:---------|:------------------------------|
+    | tpep_pickup_datetime  | datetime | Trip pickup timestamp         |
+    | tpep_dropoff_datetime | datetime | Trip dropoff timestamp        |
+    | passenger_count       | uint8    | Number of passengers          |
+    | trip_distance         | float32  | Trip distance in miles        |
+    | pickup_x              | float32  | Pickup longitude coordinate   |
+    | pickup_y              | float32  | Pickup latitude coordinate    |
+    | dropoff_x             | float32  | Dropoff longitude coordinate  |
+    | dropoff_y             | float32  | Dropoff latitude coordinate   |
+    | fare_amount           | float32  | Base fare in dollars          |
+    | tip_amount            | float32  | Tip amount in dollars         |
+    | dropoff_hour          | uint8    | Drop off time in 24hr format  |
+    | pickup_hour           | uint8    | Pick up time in 24hr format   |
 
     Source
     ------
@@ -632,7 +624,7 @@ def nyc_taxi(
         polars_columns = engine_kwargs.pop("columns")
 
     data = _load_tabular(
-        "/Users/mac/Documents/hvsampledata/nyc_taxi.parquet",  # new link
+        "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
         format="parquet",
         engine=engine,
         engine_kwargs=engine_kwargs,

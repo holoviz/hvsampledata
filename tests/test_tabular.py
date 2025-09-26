@@ -589,25 +589,18 @@ def test_nyc_taxi_schema_eager(engine):
 
         expected_dtypes = pd.Series(
             {
-                "VendorID": np.dtype("int8"),
                 "tpep_pickup_datetime": np.dtype("datetime64[us]"),
                 "tpep_dropoff_datetime": np.dtype("datetime64[us]"),
-                "passenger_count": np.dtype("int8"),
+                "passenger_count": np.dtype("uint8"),
                 "trip_distance": np.dtype("float32"),
                 "pickup_x": np.dtype("float32"),
                 "pickup_y": np.dtype("float32"),
-                "RateCodeID": np.dtype("int8"),
-                "store_and_fwd_flag": np.dtype("O"),
                 "dropoff_x": np.dtype("float32"),
                 "dropoff_y": np.dtype("float32"),
-                "payment_type": np.dtype("int8"),
                 "fare_amount": np.dtype("float32"),
-                "extra": np.dtype("float32"),
-                "mta_tax": np.dtype("float32"),
                 "tip_amount": np.dtype("float32"),
-                "tolls_amount": np.dtype("float32"),
-                "improvement_surcharge": np.dtype("float32"),
-                "total_amount": np.dtype("float32"),
+                "dropoff_hour": np.dtype("uint8"),
+                "pickup_hour": np.dtype("uint8"),
             }
         )
         pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
@@ -615,25 +608,18 @@ def test_nyc_taxi_schema_eager(engine):
         import polars as pl
 
         expected_schema = {
-            "VendorID": pl.Int8,
-            "tpep_pickup_datetime": pl.Datetime(time_unit="us", time_zone=None),
-            "tpep_dropoff_datetime": pl.Datetime(time_unit="us", time_zone=None),
-            "passenger_count": pl.Int8,
+            "tpep_pickup_datetime": pl.Datetime(time_unit="ns", time_zone=None),
+            "tpep_dropoff_datetime": pl.Datetime(time_unit="ns", time_zone=None),
+            "passenger_count": pl.UInt8,
             "trip_distance": pl.Float32,
             "pickup_x": pl.Float32,
             "pickup_y": pl.Float32,
-            "RateCodeID": pl.Int8,
-            "store_and_fwd_flag": pl.String,
             "dropoff_x": pl.Float32,
             "dropoff_y": pl.Float32,
-            "payment_type": pl.Int8,
             "fare_amount": pl.Float32,
-            "extra": pl.Float32,
-            "mta_tax": pl.Float32,
             "tip_amount": pl.Float32,
-            "tolls_amount": pl.Float32,
-            "improvement_surcharge": pl.Float32,
-            "total_amount": pl.Float32,
+            "dropoff_hour": pl.UInt8,
+            "pickup_hour": pl.UInt8,
         }
         assert df.schema == expected_schema
     else:
@@ -651,25 +637,18 @@ def test_nyc_taxi_schema_lazy(engine):
 
         expected_dtypes = pd.Series(
             {
-                "VendorID": np.dtype("int8"),
                 "tpep_pickup_datetime": np.dtype("datetime64[us]"),
                 "tpep_dropoff_datetime": np.dtype("datetime64[us]"),
-                "passenger_count": np.dtype("int8"),
+                "passenger_count": np.dtype("uint8"),
                 "trip_distance": np.dtype("float32"),
                 "pickup_x": np.dtype("float32"),
                 "pickup_y": np.dtype("float32"),
-                "RateCodeID": np.dtype("int8"),
-                "store_and_fwd_flag": pd.StringDtype("pyarrow"),
                 "dropoff_x": np.dtype("float32"),
                 "dropoff_y": np.dtype("float32"),
-                "payment_type": np.dtype("int8"),
                 "fare_amount": np.dtype("float32"),
-                "extra": np.dtype("float32"),
-                "mta_tax": np.dtype("float32"),
                 "tip_amount": np.dtype("float32"),
-                "tolls_amount": np.dtype("float32"),
-                "improvement_surcharge": np.dtype("float32"),
-                "total_amount": np.dtype("float32"),
+                "dropoff_hour": np.dtype("uint8"),
+                "pickup_hour": np.dtype("uint8"),
             }
         )
         pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
@@ -677,25 +656,18 @@ def test_nyc_taxi_schema_lazy(engine):
         import polars as pl
 
         expected_schema = {
-            "VendorID": pl.Int8,
-            "tpep_pickup_datetime": pl.Datetime(time_unit="us", time_zone=None),
-            "tpep_dropoff_datetime": pl.Datetime(time_unit="us", time_zone=None),
-            "passenger_count": pl.Int8,
+            "tpep_pickup_datetime": pl.Datetime(time_unit="ns", time_zone=None),
+            "tpep_dropoff_datetime": pl.Datetime(time_unit="ns", time_zone=None),
+            "passenger_count": pl.UInt8,
             "trip_distance": pl.Float32,
             "pickup_x": pl.Float32,
             "pickup_y": pl.Float32,
-            "RateCodeID": pl.Int8,
-            "store_and_fwd_flag": pl.String,
             "dropoff_x": pl.Float32,
             "dropoff_y": pl.Float32,
-            "payment_type": pl.Int8,
             "fare_amount": pl.Float32,
-            "extra": pl.Float32,
-            "mta_tax": pl.Float32,
             "tip_amount": pl.Float32,
-            "tolls_amount": pl.Float32,
-            "improvement_surcharge": pl.Float32,
-            "total_amount": pl.Float32,
+            "dropoff_hour": pl.UInt8,
+            "pickup_hour": pl.UInt8,
         }
         assert df.lazy().collect().schema == expected_schema
     else:
