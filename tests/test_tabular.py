@@ -582,7 +582,7 @@ def test_us_states_category_ordering(engine):
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
 def test_nyc_taxi_schema_eager(engine):
     pytest.importorskip(engine)
-    df = hvs.nyc_taxi(engine=engine)
+    df = hvs.nyc_taxi_remote(engine=engine)
     if engine == "pandas":
         import numpy as np
         import pandas as pd
@@ -630,7 +630,7 @@ def test_nyc_taxi_schema_eager(engine):
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
 def test_nyc_taxi_schema_lazy(engine):
     pytest.importorskip(engine)
-    df = hvs.nyc_taxi(engine=engine, lazy=True)
+    df = hvs.nyc_taxi_remote(engine=engine, lazy=True)
     if engine == "dask":
         import numpy as np
         import pandas as pd
@@ -676,11 +676,11 @@ def test_nyc_taxi_schema_lazy(engine):
 
 
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
-def test_nyc_taxi_usecols_eager(engine):
+def test_nyc_taxi_colums_eager(engine):
     pytest.importorskip(engine)
 
     kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
-    df = hvs.nyc_taxi(engine=engine, lazy=False, engine_kwargs=kwargs)
+    df = hvs.nyc_taxi_remote(engine=engine, lazy=False, engine_kwargs=kwargs)
 
     expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
     if engine in ("pandas", "polars"):
@@ -692,11 +692,11 @@ def test_nyc_taxi_usecols_eager(engine):
 
 
 @pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
-def test_nyc_taxi_usecols_lazy(engine):
+def test_nyc_taxi_columns_lazy(engine):
     pytest.importorskip(engine)
 
     kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
-    df = hvs.nyc_taxi(engine=engine, engine_kwargs=kwargs, lazy=True)
+    df = hvs.nyc_taxi_remote(engine=engine, engine_kwargs=kwargs, lazy=True)
 
     expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
     if engine == "dask":

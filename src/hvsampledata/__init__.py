@@ -553,7 +553,7 @@ def us_states(
     return gdf
 
 
-def nyc_taxi(
+def nyc_taxi_remote(
     engine: str,
     *,
     engine_kwargs: dict[str, Any] | None = None,
@@ -574,8 +574,16 @@ def nyc_taxi(
 
     Description
     -----------
-    Large dataset containing NYC taxi trip records with pickup and dropoff locations,
-    trip details and fare information.
+    Tabular record of New York City taxi trip data from 2015, containing detailed information
+    about yellow taxi trips including pickup and dropoff locations, trip characteristics,
+    and fare details. Each row represents a single taxi trip with geographic coordinates,
+    timestamps, and payment information.
+
+    This dataset contains over 11 million taxi trip records and is approximately 260MB in size.
+    The data has been pre-processed and optimized for efficient storage and faster loading.
+    Coordinates have been transformed to Web Mercator projection.
+
+    The dataset is downloaded directly from the HoloViz S3 bucket as a parquet file.
 
     Schema
     ------
@@ -591,8 +599,8 @@ def nyc_taxi(
     | dropoff_y             | float32  | Dropoff latitude coordinate   |
     | fare_amount           | float32  | Base fare in dollars          |
     | tip_amount            | float32  | Tip amount in dollars         |
-    | dropoff_hour          | uint8    | Drop off time in 24hr format  |
-    | pickup_hour           | uint8    | Pick up time in 24hr format   |
+    | dropoff_hour          | uint8    | Dropoff time in 24hr format   |
+    | pickup_hour           | uint8    | Pickup time in 24hr format    |
 
     Source
     ------

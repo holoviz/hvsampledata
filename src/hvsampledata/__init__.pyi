@@ -127,28 +127,28 @@ def stocks(
     lazy: Literal[True] = True,
 ) -> _dd.DataFrame: ...
 @overload
-def nyc_taxi(
+def nyc_taxi_remote(
     engine: Literal["pandas"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
 ) -> _pd.DataFrame: ...
 @overload
-def nyc_taxi(
+def nyc_taxi_remote(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[False] = False,
 ) -> _pl.DataFrame: ...
 @overload
-def nyc_taxi(
+def nyc_taxi_remote(
     engine: Literal["polars"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: Literal[True] = True,
 ) -> _pl.LazyFrame: ...
 @overload
-def nyc_taxi(
+def nyc_taxi_remote(
     engine: Literal["dask"],
     *,
     engine_kwargs: dict[str, Any] | None = None,
