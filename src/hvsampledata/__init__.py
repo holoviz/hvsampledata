@@ -8,7 +8,7 @@ Currently available datasets:
 | apple_stocks       | Tabular | Yes      |
 | earthquakes        | Tabular | Yes      |
 | landsat_rgb        | Gridded | Yes      |
-| nyc_taxi           | Tabular | Remote   |
+| nyc_taxi_remote    | Tabular | Remote   |
 | penguins           | Tabular | Yes      |
 | penguins_rgba      | Gridded | Yes      |
 | stocks             | Tabular | Yes      |
@@ -20,7 +20,7 @@ Use it with:
 >>> import hvsampledata
 >>> ds = hvsampledata.air_temperature("xarray")
 >>> df = hvsampledata.penguins("pandas")
->>> ddf = hvsampledata.nyc_taxi("dask")
+>>> df = hvsampledata.nyc_taxi_remote("pandas")
 
 """
 
@@ -615,13 +615,13 @@ def nyc_taxi_remote(
     --------
     Load full dataset:
 
-    >>> df = nyc_taxi("polars")  # Polars DataFrame
-    >>> df = nyc_taxi("dask", lazy=True)  # Dask DataFrame
+    >>> df = nyc_taxi_remote("polars")  # Polars DataFrame
+    >>> df = nyc_taxi_remote("dask", lazy=True)  # Dask DataFrame
 
     Load specific columns:
 
-    >>> df = nyc_taxi("polars", engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
-    >>> df = nyc_taxi("polars", lazy=True,
+    >>> df = nyc_taxi_remote("polars", engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
+    >>> df = nyc_taxi_remote("polars", lazy=True,
     ...               engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
     """
     engine_kwargs = engine_kwargs or {}
@@ -845,7 +845,7 @@ __all__ = (
     "apple_stocks",
     "earthquakes",
     "landsat_rgb",
-    "nyc_taxi",
+    "nyc_taxi_remote",
     "penguins",
     "penguins_rgba",
     "stocks",
