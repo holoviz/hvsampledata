@@ -593,10 +593,10 @@ def nyc_taxi_remote(
     | tpep_dropoff_datetime | datetime | Trip dropoff timestamp        |
     | passenger_count       | uint8    | Number of passengers          |
     | trip_distance         | float32  | Trip distance in miles        |
-    | pickup_x              | float32  | Pickup longitude coordinate   |
-    | pickup_y              | float32  | Pickup latitude coordinate    |
-    | dropoff_x             | float32  | Dropoff longitude coordinate  |
-    | dropoff_y             | float32  | Dropoff latitude coordinate   |
+    | pickup_x              | float32  | Pickup X coordinate           |
+    | pickup_y              | float32  | Pickup Y coordinate           |
+    | dropoff_x             | float32  | Dropoff X coordinate          |
+    | dropoff_y             | float32  | Dropoff Y coordinate          |
     | fare_amount           | float32  | Base fare in dollars          |
     | tip_amount            | float32  | Tip amount in dollars         |
     | dropoff_hour          | uint8    | Dropoff time in 24hr format   |
