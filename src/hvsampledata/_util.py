@@ -45,8 +45,10 @@ def _download_data(*, url, path):
 
     headers = {"User-Agent": f"hvsampledata {__version__}"}
 
+    http = PoolManager()
+    response = None
+
     try:
-        http = PoolManager()
         response = http.request("GET", url, preload_content=False, headers=headers)
 
         if response.status == 200:
@@ -58,9 +60,12 @@ def _download_data(*, url, path):
             print(f"Failed to download file. HTTP Status: {response.status}")
     except Exception:
         print("Failed to download file")
-        os.remove(path)
+        if path.exists():
+            os.remove(path)
     finally:
-        response.release_conn()
+        if response is not None:
+            response.release_conn()
+        http.clear()
 
 
 def _get_method(*, engine: str | None, format: str, engine_lookups: dict[str, dict[str, str]]):

@@ -127,7 +127,7 @@ pytest-cov = "*"
 pytest-github-actions-annotate-failures = "*"
 
 [feature.test-core.tasks]
-test-unit = 'pytest tests'
+test-unit = { cmd = 'pytest tests', depends-on = ['install'] }
 
 # =============================================
 # =================== DOCS ====================
