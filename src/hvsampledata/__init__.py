@@ -20,7 +20,6 @@ Use it with:
 >>> import hvsampledata
 >>> ds = hvsampledata.air_temperature("xarray")
 >>> df = hvsampledata.penguins("pandas")
->>> df = hvsampledata.nyc_taxi_remote("pandas")
 
 """
 
@@ -583,24 +582,25 @@ def nyc_taxi_remote(
     The data has been pre-processed and optimized for efficient storage and faster loading.
     Coordinates have been transformed to Web Mercator projection.
 
-    The dataset is downloaded directly from the HoloViz S3 bucket as a parquet file.
+    The dataset is downloaded directly from the HoloViz S3 bucket as a parquet file here:
+    https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq.
 
     Schema
     ------
-    | name                  | type     | description                   |
-    |:----------------------|:---------|:------------------------------|
-    | tpep_pickup_datetime  | datetime | Trip pickup timestamp         |
-    | tpep_dropoff_datetime | datetime | Trip dropoff timestamp        |
-    | passenger_count       | uint8    | Number of passengers          |
-    | trip_distance         | float32  | Trip distance in miles        |
-    | pickup_x              | float32  | Pickup X coordinate           |
-    | pickup_y              | float32  | Pickup Y coordinate           |
-    | dropoff_x             | float32  | Dropoff X coordinate          |
-    | dropoff_y             | float32  | Dropoff Y coordinate          |
-    | fare_amount           | float32  | Base fare in dollars          |
-    | tip_amount            | float32  | Tip amount in dollars         |
-    | dropoff_hour          | uint8    | Dropoff time in 24hr format   |
-    | pickup_hour           | uint8    | Pickup time in 24hr format    |
+    | name                  | type                  | description                   |
+    |:----------------------|:----------------------|:------------------------------|
+    | tpep_pickup_datetime  | datetime [US/Eastern] | Trip pickup timestamp         |
+    | tpep_dropoff_datetime | datetime [US/Eastern] | Trip dropoff timestamp        |
+    | passenger_count       | uint8                 | Number of passengers          |
+    | trip_distance         | float32               | Trip distance in miles        |
+    | pickup_x              | float32               | Pickup X coordinate           |
+    | pickup_y              | float32               | Pickup Y coordinate           |
+    | dropoff_x             | float32               | Dropoff X coordinate          |
+    | dropoff_y             | float32               | Dropoff Y coordinate          |
+    | fare_amount           | float32               | Base fare in dollars          |
+    | tip_amount            | float32               | Tip amount in dollars         |
+    | dropoff_hour          | uint8                 | Dropoff time in 24hr format   |
+    | pickup_hour           | uint8                 | Pickup time in 24hr format    |
 
     Source
     ------
@@ -621,12 +621,10 @@ def nyc_taxi_remote(
     Load specific columns:
 
     >>> df = nyc_taxi_remote("polars", engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
-    >>> df = nyc_taxi_remote("polars", lazy=True,
-    ...               engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
     """
     engine_kwargs = engine_kwargs or {}
 
-    # Handle columns selection in polars
+    # Handle columns selection for lazy loading in polars
     polars_columns = None
     if engine == "polars" and "columns" in engine_kwargs and lazy:
         polars_columns = engine_kwargs.pop("columns")
