@@ -624,11 +624,6 @@ def nyc_taxi_remote(
     """
     engine_kwargs = engine_kwargs or {}
 
-    # Handle columns selection for lazy loading in polars
-    polars_columns = None
-    if engine == "polars" and "columns" in engine_kwargs and lazy:
-        polars_columns = engine_kwargs.pop("columns")
-
     data = _load_tabular(
         "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
         format="parquet",
@@ -636,10 +631,6 @@ def nyc_taxi_remote(
         engine_kwargs=engine_kwargs,
         lazy=lazy,
     )
-
-    # Apply column selection for polars lazy loading
-    if engine == "polars" and lazy and polars_columns:
-        data = data.select(polars_columns)
 
     return data
 

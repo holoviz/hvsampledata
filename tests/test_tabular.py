@@ -691,22 +691,15 @@ def test_nyc_taxi_colums_eager(engine):
         raise ValueError(msg)
 
 
-@pytest.mark.parametrize("engine", list(_LAZY_TABULAR_LOOKUP))
+@pytest.mark.parametrize("engine", ["dask"])
 def test_nyc_taxi_columns_lazy(engine):
+    # Test only dask for lazy loading as polars `scan_parquet` has no `columns` parameter
     pytest.importorskip(engine)
 
     kwargs = {"columns": ["pickup_x", "pickup_y", "dropoff_x", "dropoff_y"]}
-    df = hvs.nyc_taxi_remote(engine=engine, engine_kwargs=kwargs, lazy=True)
-
     expected_columns = {"pickup_x", "pickup_y", "dropoff_x", "dropoff_y"}
-    if engine == "dask":
-        columns = df.columns
-        assert set(columns) == expected_columns
-        assert len(columns) == 4
-    elif engine == "polars":
-        columns = df.collect().columns
-        assert set(columns) == expected_columns
-        assert len(columns) == 4
-    else:
-        msg = "Not valid engine"
-        raise ValueError(msg)
+
+    df = hvs.nyc_taxi_remote(engine=engine, engine_kwargs=kwargs, lazy=True)
+    columns = df.columns
+    assert set(columns) == expected_columns
+    assert len(columns) == 4
