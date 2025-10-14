@@ -587,20 +587,20 @@ def nyc_taxi_remote(
 
     Schema
     ------
-    | name                  | type                  | description                   |
-    |:----------------------|:----------------------|:------------------------------|
-    | tpep_pickup_datetime  | datetime [US/Eastern] | Trip pickup timestamp         |
-    | tpep_dropoff_datetime | datetime [US/Eastern] | Trip dropoff timestamp        |
-    | passenger_count       | uint8                 | Number of passengers          |
-    | trip_distance         | float32               | Trip distance in miles        |
-    | pickup_x              | float32               | Pickup X coordinate           |
-    | pickup_y              | float32               | Pickup Y coordinate           |
-    | dropoff_x             | float32               | Dropoff X coordinate          |
-    | dropoff_y             | float32               | Dropoff Y coordinate          |
-    | fare_amount           | float32               | Base fare in dollars          |
-    | tip_amount            | float32               | Tip amount in dollars         |
-    | dropoff_hour          | uint8                 | Dropoff time in 24hr format   |
-    | pickup_hour           | uint8                 | Pickup time in 24hr format    |
+    | name                  | type      | description                              |
+    |:----------------------|:----------|:-----------------------------------------|
+    | tpep_pickup_datetime  | datetime  | Trip pickup timestamp (US/Eastern time)  |
+    | tpep_dropoff_datetime | datetime  | Trip dropoff timestamp (US/Eastern time) |
+    | passenger_count       | uint8     | Number of passengers                     |
+    | trip_distance         | float32   | Trip distance in miles                   |
+    | pickup_x              | float32   | Pickup X coordinate                      |
+    | pickup_y              | float32   | Pickup Y coordinate                      |
+    | dropoff_x             | float32   | Dropoff X coordinate                     |
+    | dropoff_y             | float32   | Dropoff Y coordinate                     |
+    | fare_amount           | float32   | Base fare in dollars                     |
+    | tip_amount            | float32   | Tip amount in dollars                    |
+    | dropoff_hour          | uint8     | Dropoff time in 24hr format              |
+    | pickup_hour           | uint8     | Pickup time in 24hr format               |
 
     Source
     ------
