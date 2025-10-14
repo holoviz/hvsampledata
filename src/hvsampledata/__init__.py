@@ -8,6 +8,7 @@ Currently available datasets:
 | apple_stocks       | Tabular | Yes      |
 | earthquakes        | Tabular | Yes      |
 | landsat_rgb        | Gridded | Yes      |
+| nyc_taxi_remote    | Tabular | Remote   |
 | penguins           | Tabular | Yes      |
 | penguins_rgba      | Gridded | Yes      |
 | stocks             | Tabular | Yes      |
@@ -551,6 +552,89 @@ def us_states(
     return gdf
 
 
+def nyc_taxi_remote(
+    engine: str,
+    *,
+    engine_kwargs: dict[str, Any] | None = None,
+    lazy: bool = False,
+):
+    """NYC Taxi trip record data 2015.
+
+    Parameters
+    ----------
+    engine : str
+        Engine used to read the dataset. "pandas" or "polars" for eager dataframes,
+        "polars" or "dask" for lazy dataframes.
+    engine_kwargs : dict[str, Any], optional
+        Additional kwargs to pass to `read_parquet`/`scan_parquet`, by default None.
+        Note: For polars lazy loading, column selection is applied via .select() after scan_parquet().
+    lazy : bool, optional
+        Whether to load the dataset in a lazy container.
+
+    Description
+    -----------
+    Tabular record of New York City taxi trip data from 2015, containing detailed information
+    about yellow taxi trips including pickup and dropoff locations, trip characteristics,
+    and fare details. Each row represents a single taxi trip with geographic coordinates,
+    timestamps, and payment information.
+
+    This dataset contains over 11 million taxi trip records and is approximately 260MB in size.
+    The data has been pre-processed and optimized for efficient storage and faster loading.
+    Coordinates have been transformed to Web Mercator projection.
+
+    The dataset is downloaded directly from the HoloViz S3 bucket as a parquet file here:
+    https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq.
+
+    Schema
+    ------
+    | name                  | type      | description                              |
+    |:----------------------|:----------|:-----------------------------------------|
+    | tpep_pickup_datetime  | datetime  | Trip pickup timestamp (US/Eastern time)  |
+    | tpep_dropoff_datetime | datetime  | Trip dropoff timestamp (US/Eastern time) |
+    | passenger_count       | uint8     | Number of passengers                     |
+    | trip_distance         | float32   | Trip distance in miles                   |
+    | pickup_x              | float32   | Pickup X coordinate                      |
+    | pickup_y              | float32   | Pickup Y coordinate                      |
+    | dropoff_x             | float32   | Dropoff X coordinate                     |
+    | dropoff_y             | float32   | Dropoff Y coordinate                     |
+    | fare_amount           | float32   | Base fare in dollars                     |
+    | tip_amount            | float32   | Tip amount in dollars                    |
+    | dropoff_hour          | uint8     | Dropoff time in 24hr format              |
+    | pickup_hour           | uint8     | Pickup time in 24hr format               |
+
+    Source
+    ------
+    NYC Taxi and Limousine Commission (TLC) trip record data.
+    Available at: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+
+    License
+    -------
+    Public domain / NYC Open Data.
+
+    Examples
+    --------
+    Load full dataset:
+
+    >>> df = nyc_taxi_remote("polars")  # Polars DataFrame
+    >>> df = nyc_taxi_remote("dask", lazy=True)  # Dask DataFrame
+
+    Load specific columns:
+
+    >>> df = nyc_taxi_remote("polars", engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
+    """
+    engine_kwargs = engine_kwargs or {}
+
+    data = _load_tabular(
+        "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
+        format="parquet",
+        engine=engine,
+        engine_kwargs=engine_kwargs,
+        lazy=lazy,
+    )
+
+    return data
+
+
 # -----------------------------------------------------------------------------
 # Gridded data
 # -----------------------------------------------------------------------------
@@ -750,6 +834,7 @@ __all__ = (
     "apple_stocks",
     "earthquakes",
     "landsat_rgb",
+    "nyc_taxi_remote",
     "penguins",
     "penguins_rgba",
     "stocks",

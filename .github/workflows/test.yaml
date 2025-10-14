@@ -106,6 +106,17 @@ jobs:
       - uses: holoviz-dev/holoviz_tasks/pixi_install@v0
         with:
           environments: ${{ matrix.environment }}
+      - name: Cache sample datasets
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/hvsampledata
+            ~/Library/Caches/hvsampledata
+            ~\AppData\Local\hvsampledata\Cache
+          key: hvsampledata-cache-${{ runner.os }}-${{ hashFiles('**/src/hvsampledata/_data/*') }}
+          restore-keys: |
+            hvsampledata-cache-${{ runner.os }}-
+            hvsampledata-cache-
       - name: Test Unit
         run: |
           pixi run -e ${{ matrix.environment }} test-unit
@@ -124,6 +135,14 @@ jobs:
       - uses: holoviz-dev/holoviz_tasks/pixi_install@v0
         with:
           environments: ${{ matrix.environment }}
+      - name: Cache sample datasets
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/hvsampledata
+          key: hvsampledata-cache-${{ runner.os }}-${{ hashFiles('**/src/hvsampledata/_data/*') }}
+          restore-keys: |
+            hvsampledata-cache-${{ runner.os }}-
+            hvsampledata-cache-
       - name: Test Unit
         run: pixi run -e ${{ matrix.environment }} test-unit
 
