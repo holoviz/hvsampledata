@@ -511,6 +511,17 @@ def us_states(
     The polygons and multipolygons are in the WGS84 coordinate reference
     system (EPSG:4326).
 
+    Notes
+    -----
+    Some states (California, Florida, Kentucky, Massachusetts, Michigan,
+    New York, Rhode Island) contain MultiPolygon geometries to represent
+    non-contiguous areas like islands. When plotting with HoloViews' matplotlib
+    backend, you may need to explode these MultiPolygons to individual Polygons:
+
+    >>> gdf = us_states("geopandas")
+    >>> gdf = gdf.explode(index_parts=True).reset_index(drop=True)
+    >>> gdf.hvplot.polygons(...)
+
     Schema
     ------
     | name              | type      | description                                  |
