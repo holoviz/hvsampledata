@@ -519,7 +519,7 @@ def us_states(
     backend, you may need to explode these MultiPolygons to individual Polygons:
 
     >>> gdf = us_states("geopandas")
-    >>> gdf = gdf.explode(index_parts=True).reset_index(drop=True)
+    >>> gdf = gdf.explode().reset_index(drop=True)
     >>> gdf.hvplot.polygons(...)
 
     Schema
