@@ -85,6 +85,25 @@ def _get_method(*, engine: str | None, format: str, engine_lookups: dict[str, di
         print("No available engines can be imported")
 
 
+def _download_remote_file(url: str) -> Path:
+    import pooch
+
+    # Known hashes for specific files
+    known_hashes = {
+        "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq": "sha256:984e130de1b2b679f46c79f5263851e8abde13c5becef5d5e0545e5dd61555be",
+    }
+
+    filename = Path(url).name
+    file_path = pooch.retrieve(
+        url=url,
+        known_hash=known_hashes.get(url),  # Use hash if available, None otherwise
+        path=_CACHEPATH,
+        fname=filename,
+    )
+
+    return Path(file_path)
+
+
 def _load_tabular(
     dataset: str,
     *,
@@ -92,7 +111,16 @@ def _load_tabular(
     engine: str | None = None,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
+    download_only: bool = False,
 ):
+    # Handle download-only mode for remote files
+    if download_only:
+        if not dataset.startswith(("http://", "https://")):
+            msg = "download_only=True is only supported for remote URLs"
+            raise ValueError(msg)
+
+        return _download_remote_file(dataset)
+
     path = _get_path(dataset)
     format = format or os.fspath(dataset).split(".")[-1]
     engine_lookup = _LAZY_TABULAR_LOOKUP if lazy else _EAGER_TABULAR_LOOKUP

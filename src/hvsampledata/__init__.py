@@ -557,6 +557,7 @@ def nyc_taxi_remote(
     *,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
+    download_only: bool = False,
 ):
     """NYC Taxi trip record data 2015.
 
@@ -570,6 +571,15 @@ def nyc_taxi_remote(
         Note: For polars lazy loading, column selection is applied via .select() after scan_parquet().
     lazy : bool, optional
         Whether to load the dataset in a lazy container.
+    download_only : bool, optional
+        If True, downloads the file to cache and returns the file path without loading into memory.
+        Default is False.
+
+    Returns
+    -------
+    DataFrame or Path
+        If download_only=False: Returns a dataframe (pandas, polars, or dask depending on engine).
+        If download_only=True: Returns a Path object pointing to the cached file.
 
     Description
     -----------
@@ -621,6 +631,11 @@ def nyc_taxi_remote(
     Load specific columns:
 
     >>> df = nyc_taxi_remote("polars", engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
+
+    Download without loading into memory:
+
+    >>> path = nyc_taxi_remote("pandas", download_only=True)
+    >>> print(path)  # Returns Path to cached file
     """
     engine_kwargs = engine_kwargs or {}
 
@@ -630,6 +645,7 @@ def nyc_taxi_remote(
         engine=engine,
         engine_kwargs=engine_kwargs,
         lazy=lazy,
+        download_only=download_only,
     )
 
     return data
