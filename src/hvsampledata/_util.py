@@ -128,10 +128,6 @@ def _load_tabular(
 ):
     # Handle download-only mode for remote files
     if download_only:
-        if not dataset.startswith(("http://", "https://")):
-            msg = "download_only=True is only supported for remote URLs"
-            raise ValueError(msg)
-
         return _get_path(dataset)
 
     path = _get_path(dataset)
