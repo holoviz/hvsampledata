@@ -61,21 +61,22 @@ def _download_data(*, url, path):
         response = http.request("GET", url, preload_content=False, headers=headers)
 
         if response.status == 200:
-            with open(path, "wb") as f:
-                for chunk in response.stream(1024):
-                    f.write(chunk)
-
             # Verify hash if available
             expected_hash = _KNOWN_HASHES.get(url)
+            sha256_hash = None
             if expected_hash:
                 import hashlib
 
                 sha256_hash = hashlib.sha256()
-                with open(path, "rb") as f:
-                    for chunk in iter(lambda: f.read(4096), b""):
-                        sha256_hash.update(chunk)
-                actual_hash = sha256_hash.hexdigest()
 
+            with open(path, "wb") as f:
+                for chunk in response.stream(1024):
+                    f.write(chunk)
+                    if sha256_hash is not None:
+                        sha256_hash.update(chunk)
+
+            if sha256_hash is not None:
+                actual_hash = sha256_hash.hexdigest()
                 if actual_hash != expected_hash:
                     os.remove(path)
                     msg = (
