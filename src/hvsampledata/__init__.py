@@ -632,7 +632,7 @@ def nyc_taxi_remote(
 
     >>> df = nyc_taxi_remote("polars", engine_kwargs={"columns": ["pickup_x", "pickup_y"]})
 
-    Download without loading into memory:
+    Download data only:
 
     >>> path = nyc_taxi_remote("pandas", download_only=True)
     >>> print(path)  # Returns Path to cached file

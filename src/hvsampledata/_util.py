@@ -30,6 +30,10 @@ _EAGER_GRIDDED_LOOKUP = {
 }
 
 
+class HashMismatchError(RuntimeError):
+    """Raised when a file's hash doesn't match the expected value."""
+
+
 def _get_path(dataset: str) -> Path:
     if dataset.startswith("http"):
         dataset_name = urlsplit(dataset).path.lstrip("/")
@@ -79,7 +83,7 @@ def _download_data(*, url, path):
                         f"Expected: {expected_hash}, Got: {actual_hash}. "
                         f"File may be corrupted."
                     )
-                    raise ValueError(msg)
+                    raise HashMismatchError(msg)
 
             print(f"File saved to {path}")
         else:
