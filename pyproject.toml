@@ -26,7 +26,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries",
 ]
-dependencies = ["platformdirs >=3.0.0", "urllib3 >=1.26.0", "pooch >=1.8.2"]
+dependencies = ["platformdirs >=3.0.0", "urllib3 >=1.26.0"]
 
 # [project.urls]
 # Homepage = "https://holoviews.org"
