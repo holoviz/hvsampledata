@@ -124,12 +124,7 @@ def _load_tabular(
     engine: str | None = None,
     engine_kwargs: dict[str, Any] | None = None,
     lazy: bool = False,
-    download_only: bool = False,
 ):
-    # Handle download-only mode for remote files
-    if download_only:
-        return _get_path(dataset)
-
     path = _get_path(dataset)
     format = format or os.fspath(dataset).split(".")[-1]
     engine_lookup = _LAZY_TABULAR_LOOKUP if lazy else _EAGER_TABULAR_LOOKUP
