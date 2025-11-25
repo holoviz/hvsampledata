@@ -121,6 +121,9 @@ def us_states(
     engine_kwargs: dict[str, Any] | None = None,
 ) -> _gpd.GeoDataFrame: ...
 """
+download = """@overload
+def download(dataset: Literal["nyc_taxi_remote"]) -> _Path: ...
+"""
 
 
 def custom() -> str:
@@ -129,6 +132,7 @@ def custom() -> str:
             synthetic_clusters.strip(),
             landsat_rgb.strip(),
             us_states.strip(),
+            download.strip(),
         ]
     )
 
@@ -140,6 +144,7 @@ def main():
 
 from __future__ import annotations
 
+from pathlib import Path as _Path
 from typing import Any, Literal, overload
 
 import dask.dataframe as _dd
