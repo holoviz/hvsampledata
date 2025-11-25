@@ -25,10 +25,11 @@ Use it with:
 
 from __future__ import annotations
 
-from typing import Any
+from pathlib import Path
+from typing import Any, Literal
 
 from .__version import __version__
-from ._util import _DATAPATH, _load_gridded, _load_tabular
+from ._util import _DATAPATH, _REMOTE_DATASETS, _get_path, _load_gridded, _load_tabular
 
 # -----------------------------------------------------------------------------
 # Tabular data
@@ -571,6 +572,11 @@ def nyc_taxi_remote(
     lazy : bool, optional
         Whether to load the dataset in a lazy container.
 
+    Returns
+    -------
+    DataFrame
+        A dataframe (pandas, polars, or dask depending on engine and lazy parameters).
+
     Description
     -----------
     Tabular record of New York City taxi trip data from 2015, containing detailed information
@@ -625,7 +631,7 @@ def nyc_taxi_remote(
     engine_kwargs = engine_kwargs or {}
 
     data = _load_tabular(
-        "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
+        _REMOTE_DATASETS["nyc_taxi_remote"]["url"],
         format="parquet",
         engine=engine,
         engine_kwargs=engine_kwargs,
@@ -633,6 +639,45 @@ def nyc_taxi_remote(
     )
 
     return data
+
+
+def download(dataset: Literal["nyc_taxi_remote"]) -> Path:
+    """Download a remote dataset to cache without loading it into memory.
+
+    Parameters
+    ----------
+    dataset : str
+        Name of the dataset to download. Currently supported:
+        - "nyc_taxi_remote": NYC Taxi trip record data 2015
+
+    Returns
+    -------
+    Path
+        Path object pointing to the cached file location.
+
+    Description
+    -----------
+    This function downloads remote datasets to the local cache directory without
+    loading them into memory.
+
+    The downloaded files are cached in the user's cache directory and will be
+    verified against known SHA256 hashes if available.
+
+    Examples
+    --------
+    Download NYC taxi dataset:
+
+    >>> import pandas as pd
+    >>> path = download("nyc_taxi_remote")
+    >>> df = pd.read_parquet(path)
+    """
+    if dataset not in _REMOTE_DATASETS:
+        available = ", ".join(f"'{k}'" for k in _REMOTE_DATASETS)
+        msg = f"Unknown dataset '{dataset}'. Available datasets: {available}"
+        raise ValueError(msg)
+
+    url = _REMOTE_DATASETS[dataset]["url"]
+    return _get_path(url)
 
 
 # -----------------------------------------------------------------------------
@@ -832,6 +877,7 @@ __all__ = (
     "__version__",
     "air_temperature",
     "apple_stocks",
+    "download",
     "earthquakes",
     "landsat_rgb",
     "nyc_taxi_remote",

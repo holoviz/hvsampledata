@@ -12,6 +12,14 @@ from platformdirs import user_cache_path
 _DATAPATH = Path(__file__).parent / "_data"
 _CACHEPATH = user_cache_path() / "hvsampledata"
 
+# Remote datasets - add new entries when adding remote datasets
+_REMOTE_DATASETS = {
+    "nyc_taxi_remote": {
+        "url": "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
+        "sha256": "984e130de1b2b679f46c79f5263851e8abde13c5becef5d5e0545e5dd61555be",
+    },
+}
+
 _EAGER_TABULAR_LOOKUP = {
     "pandas": {"csv": "read_csv", "parquet": "read_parquet"},
     "polars": {"csv": "read_csv", "parquet": "read_parquet"},
@@ -23,6 +31,10 @@ _LAZY_TABULAR_LOOKUP = {
 _EAGER_GRIDDED_LOOKUP = {
     "xarray": {"dataset": "open_dataset", "dataarray": "open_dataarray"},
 }
+
+
+class HashMismatchError(RuntimeError):
+    """Raised when a file's hash doesn't match the expected value."""
 
 
 def _get_path(dataset: str) -> Path:
@@ -52,9 +64,36 @@ def _download_data(*, url, path):
         response = http.request("GET", url, preload_content=False, headers=headers)
 
         if response.status == 200:
+            # Verify hash if available
+            expected_hash = None
+            for dataset_info in _REMOTE_DATASETS.values():
+                if dataset_info["url"] == url:
+                    expected_hash = dataset_info.get("sha256")
+                    break
+
+            sha256_hash = None
+            if expected_hash:
+                import hashlib
+
+                sha256_hash = hashlib.sha256()
+
             with open(path, "wb") as f:
                 for chunk in response.stream(1024):
                     f.write(chunk)
+                    if sha256_hash is not None:
+                        sha256_hash.update(chunk)
+
+            if sha256_hash is not None:
+                actual_hash = sha256_hash.hexdigest()
+                if actual_hash != expected_hash:
+                    os.remove(path)
+                    msg = (
+                        f"Hash mismatch for {url}. "
+                        f"Expected: {expected_hash}, Got: {actual_hash}. "
+                        f"File may be corrupted."
+                    )
+                    raise HashMismatchError(msg)
+
             print(f"File saved to {path}")
         else:
             print(f"Failed to download file. HTTP Status: {response.status}")
@@ -62,6 +101,7 @@ def _download_data(*, url, path):
         print("Failed to download file")
         if path.exists():
             os.remove(path)
+        raise
     finally:
         if response is not None:
             response.release_conn()
