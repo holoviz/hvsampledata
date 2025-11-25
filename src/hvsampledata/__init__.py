@@ -25,10 +25,11 @@ Use it with:
 
 from __future__ import annotations
 
-from typing import Any
+from pathlib import Path
+from typing import Any, Literal
 
 from .__version import __version__
-from ._util import _DATAPATH, _get_path, _load_gridded, _load_tabular
+from ._util import _DATAPATH, _REMOTE_DATASETS, _get_path, _load_gridded, _load_tabular
 
 # -----------------------------------------------------------------------------
 # Tabular data
@@ -630,7 +631,7 @@ def nyc_taxi_remote(
     engine_kwargs = engine_kwargs or {}
 
     data = _load_tabular(
-        "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
+        _REMOTE_DATASETS["nyc_taxi_remote"]["url"],
         format="parquet",
         engine=engine,
         engine_kwargs=engine_kwargs,
@@ -640,7 +641,7 @@ def nyc_taxi_remote(
     return data
 
 
-def download(dataset: str):
+def download(dataset: Literal["nyc_taxi_remote"]) -> Path:
     """Download a remote dataset to cache without loading it into memory.
 
     Parameters
@@ -670,17 +671,12 @@ def download(dataset: str):
     >>> path = download("nyc_taxi_remote")
     >>> df = pd.read_parquet(path)
     """
-    # Map dataset names to their URLs
-    dataset_urls = {
-        "nyc_taxi_remote": "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
-    }
-
-    if dataset not in dataset_urls:
-        available = ", ".join(f"'{k}'" for k in dataset_urls)
+    if dataset not in _REMOTE_DATASETS:
+        available = ", ".join(f"'{k}'" for k in _REMOTE_DATASETS)
         msg = f"Unknown dataset '{dataset}'. Available datasets: {available}"
         raise ValueError(msg)
 
-    url = dataset_urls[dataset]
+    url = _REMOTE_DATASETS[dataset]["url"]
     return _get_path(url)
 
 

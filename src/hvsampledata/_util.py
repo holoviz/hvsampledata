@@ -12,9 +12,12 @@ from platformdirs import user_cache_path
 _DATAPATH = Path(__file__).parent / "_data"
 _CACHEPATH = user_cache_path() / "hvsampledata"
 
-# Add new entries when adding remote datasets
-_KNOWN_HASHES = {
-    "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq": "984e130de1b2b679f46c79f5263851e8abde13c5becef5d5e0545e5dd61555be",
+# Remote datasets - add new entries when adding remote datasets
+_REMOTE_DATASETS = {
+    "nyc_taxi_remote": {
+        "url": "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
+        "sha256": "984e130de1b2b679f46c79f5263851e8abde13c5becef5d5e0545e5dd61555be",
+    },
 }
 
 _EAGER_TABULAR_LOOKUP = {
@@ -62,7 +65,12 @@ def _download_data(*, url, path):
 
         if response.status == 200:
             # Verify hash if available
-            expected_hash = _KNOWN_HASHES.get(url)
+            expected_hash = None
+            for dataset_info in _REMOTE_DATASETS.values():
+                if dataset_info["url"] == url:
+                    expected_hash = dataset_info.get("sha256")
+                    break
+
             sha256_hash = None
             if expected_hash:
                 import hashlib
