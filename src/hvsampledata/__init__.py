@@ -28,7 +28,7 @@ from __future__ import annotations
 from typing import Any
 
 from .__version import __version__
-from ._util import _DATAPATH, _load_gridded, _load_tabular
+from ._util import _DATAPATH, _get_path, _load_gridded, _load_tabular
 
 # -----------------------------------------------------------------------------
 # Tabular data
@@ -640,6 +640,50 @@ def nyc_taxi_remote(
     return data
 
 
+def download(dataset: str):
+    """Download a remote dataset to cache without loading it into memory.
+
+    Parameters
+    ----------
+    dataset : str
+        Name of the dataset to download. Currently supported:
+        - "nyc_taxi_remote": NYC Taxi trip record data 2015
+
+    Returns
+    -------
+    Path
+        Path object pointing to the cached file location.
+
+    Description
+    -----------
+    This function downloads remote datasets to the local cache directory without
+    loading them into memory.
+
+    The downloaded files are cached in the user's cache directory and will be
+    verified against known SHA256 hashes if available.
+
+    Examples
+    --------
+    Download NYC taxi dataset:
+
+    >>> import pandas as pd
+    >>> path = download("nyc_taxi_remote")
+    >>> df = pd.read_parquet(path)
+    """
+    # Map dataset names to their URLs
+    dataset_urls = {
+        "nyc_taxi_remote": "https://datasets.holoviz.org/nyc_taxi/v2/nyc_taxi_wide.parq",
+    }
+
+    if dataset not in dataset_urls:
+        available = ", ".join(f"'{k}'" for k in dataset_urls)
+        msg = f"Unknown dataset '{dataset}'. Available datasets: {available}"
+        raise ValueError(msg)
+
+    url = dataset_urls[dataset]
+    return _get_path(url)
+
+
 # -----------------------------------------------------------------------------
 # Gridded data
 # -----------------------------------------------------------------------------
@@ -837,6 +881,7 @@ __all__ = (
     "__version__",
     "air_temperature",
     "apple_stocks",
+    "download",
     "earthquakes",
     "landsat_rgb",
     "nyc_taxi_remote",
