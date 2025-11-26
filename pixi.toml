@@ -1,4 +1,4 @@
-[project]
+[workspace]
 name = "hvsampledata"
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
@@ -146,6 +146,7 @@ test-unit = 'pytest tests'
 [feature.build.dependencies]
 python-build = "*"
 conda-build = "*"
+conda-libmamba-solver = "!=25.11.0"
 
 [feature.build.tasks]
 build-conda = 'bash scripts/conda/build.sh'
