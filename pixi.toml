@@ -100,7 +100,7 @@ COVERAGE_CORE = "sysmon"
 
 [feature.optional.dependencies]
 dask-core = ">=2024.1.0"
-pandas = ">=2.1.0"
+pandas = ">=2.1.0, <3.0.0" # to avoid test failures in the new 3.0.0 release
 polars = ">=1.20.0"
 pyarrow = ">=14.0.0"
 pillow = ">=10.2.0"
