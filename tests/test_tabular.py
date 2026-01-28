@@ -13,6 +13,21 @@ datasets = [
     hvs.stocks,
 ]
 
+# Pandas 3.0 release had some breaking changes.
+# See https://pandas.pydata.org/docs/whatsnew/v3.0.0.html
+# Define dtype expectations based on pandas version
+try:
+    import numpy as np
+    import pandas as pd
+
+    PANDAS_GE_3 = int(pd.__version__.split(".")[0]) >= 3
+    PD_STR_DTYPE = "str" if PANDAS_GE_3 else np.dtype("O")
+    PD_DATETIME_DTYPE = np.dtype("datetime64[us]") if PANDAS_GE_3 else np.dtype("datetime64[ns]")
+except ImportError:
+    # Pandas not installed, tests will skip anyway
+    PD_STR_DTYPE = None
+    PD_DATETIME_DTYPE = None
+
 
 @pytest.mark.parametrize("dataset", datasets)
 @pytest.mark.parametrize("engine", list(_EAGER_TABULAR_LOOKUP))
@@ -60,13 +75,13 @@ def test_penguins_schema(engine):
 
         expected_dtypes = pd.Series(
             {
-                "species": np.dtype("O"),
-                "island": np.dtype("O"),
+                "species": PD_STR_DTYPE,
+                "island": PD_STR_DTYPE,
                 "bill_length_mm": np.dtype("float64"),
                 "bill_depth_mm": np.dtype("float64"),
                 "flipper_length_mm": np.dtype("float64"),
                 "body_mass_g": np.dtype("float64"),
-                "sex": np.dtype("O"),
+                "sex": PD_STR_DTYPE,
                 "year": np.dtype("int64"),
             }
         )
@@ -172,7 +187,7 @@ def test_earthquakes_schema(engine):
 
         expected_dtypes = pd.Series(
             {
-                "time": np.dtype("datetime64[ns]"),
+                "time": PD_DATETIME_DTYPE,
                 "lat": np.dtype("float64"),
                 "lon": np.dtype("float64"),
                 "depth": np.dtype("float64"),
@@ -183,7 +198,7 @@ def test_earthquakes_schema(engine):
                 "mag_class": pd.CategoricalDtype(
                     categories=["Light", "Moderate", "Strong", "Major"], ordered=True
                 ),
-                "place": np.dtype("O"),
+                "place": PD_STR_DTYPE,
             }
         )
         pd.testing.assert_series_equal(df.dtypes, expected_dtypes)
@@ -216,7 +231,7 @@ def test_earthquakes_schema_lazy(engine):
 
         expected_dtypes = pd.Series(
             {
-                "time": np.dtype("datetime64[ns]"),
+                "time": PD_DATETIME_DTYPE,
                 "lat": np.dtype("float64"),
                 "lon": np.dtype("float64"),
                 "depth": np.dtype("float64"),
@@ -287,7 +302,7 @@ def test_apple_stocks_schema(engine):
 
         expected_dtypes = pd.Series(
             {
-                "date": np.dtype("datetime64[ns]"),
+                "date": PD_DATETIME_DTYPE,
                 "open": np.dtype("float64"),
                 "high": np.dtype("float64"),
                 "low": np.dtype("float64"),
@@ -324,7 +339,7 @@ def test_apple_stocks_schema_lazy(engine):
 
         expected_dtypes = pd.Series(
             {
-                "date": np.dtype("datetime64[ns]"),
+                "date": PD_DATETIME_DTYPE,
                 "open": np.dtype("float64"),
                 "high": np.dtype("float64"),
                 "low": np.dtype("float64"),
@@ -361,7 +376,7 @@ def test_stocks_schema(engine):
 
         expected_dtypes = pd.Series(
             {
-                "date": np.dtype("datetime64[ns]"),
+                "date": PD_DATETIME_DTYPE,
                 "Apple": np.dtype("float64"),
                 "Amazon": np.dtype("float64"),
                 "Google": np.dtype("float64"),
@@ -398,7 +413,7 @@ def test_stocks_schema_lazy(engine):
 
         expected_dtypes = pd.Series(
             {
-                "date": np.dtype("datetime64[ns]"),
+                "date": PD_DATETIME_DTYPE,
                 "Apple": np.dtype("float64"),
                 "Amazon": np.dtype("float64"),
                 "Google": np.dtype("float64"),
@@ -524,7 +539,7 @@ def test_us_states_schema(engine):
 
         expected_dtypes = pd.Series(
             {
-                "state": np.dtype("O"),
+                "state": PD_STR_DTYPE,
                 "median_income": np.dtype("float64"),
                 "income_range": pd.CategoricalDtype(),
                 "pop_density": np.dtype("float64"),
