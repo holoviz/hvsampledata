@@ -107,7 +107,7 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Cache sample datasets
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/hvsampledata
@@ -136,7 +136,7 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Cache sample datasets
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/hvsampledata
           key: hvsampledata-cache-${{ runner.os }}-${{ hashFiles('**/src/hvsampledata/_data/*') }}
