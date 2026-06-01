@@ -159,15 +159,13 @@ def synthetic_clusters(
                 return pdf.lazy()
             return pdf
 
-        # Use a global StringCache so categoricals are shared
-        with pl.StringCache():
-            dfp = pl.concat(
-                [
-                    create_synthetic_dataset(x, y, s, val, cat, points_per_cluster, lazy=lazy)
-                    for x, y, s, val, cat in clusters
-                ],
-                how="vertical",
-            )
+        dfp = pl.concat(
+            [
+                create_synthetic_dataset(x, y, s, val, cat, points_per_cluster, lazy=lazy)
+                for x, y, s, val, cat in clusters
+            ],
+            how="vertical",
+        )
         return dfp
 
 
