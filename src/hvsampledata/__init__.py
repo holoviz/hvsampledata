@@ -150,9 +150,9 @@ def synthetic_clusters(
                 {
                     "x": [random.gauss(x, s) for _ in range(num)],
                     "y": [random.gauss(y, s) for _ in range(num)],
-                    "s": [s] * num,
-                    "val": [val] * num,
-                    "cat": pl.Series([cat] * num).cast(pl.Enum(cats)),
+                    "s": pl.repeat(s, n=num, dtype=pl.Float64, eager=True),
+                    "val": pl.repeat(val, n=num, dtype=pl.Int64, eager=True),
+                    "cat": pl.repeat(cat, n=num, dtype=pl.Enum(cats), eager=True),
                 }
             )
             if lazy:
