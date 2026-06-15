@@ -112,7 +112,7 @@ jobs:
           path: |
             ~/.cache/hvsampledata
             ~/Library/Caches/hvsampledata
-            ~\AppData\Local\hvsampledata\Cache
+            ~\AppData\Local\hvsampledata
           key: hvsampledata-cache-${{ runner.os }}-${{ hashFiles('**/src/hvsampledata/_data/*') }}
           restore-keys: |
             hvsampledata-cache-${{ runner.os }}-
